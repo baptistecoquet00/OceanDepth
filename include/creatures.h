@@ -1,3 +1,6 @@
+#ifndef CREATURES_H
+#define CREATURES_H
+
 typedef struct {
     int id; // identifiant unique pour cibler
     char nom[30];
@@ -10,3 +13,5 @@ typedef struct {
     char effet_special[20]; // "paralysie", "poison", "aucun"
     int est_vivant;
 } CreatureMarine;
+
+#endif
