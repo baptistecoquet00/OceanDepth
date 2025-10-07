@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "include/joueur.h"
+#include "../include/joueur.h"
 
 Plongeur* nouveau_plongeur() {
     Plongeur* plongeur = (Plongeur*)malloc(sizeof(Plongeur));
