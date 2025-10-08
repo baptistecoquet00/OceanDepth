@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include "../include/fonctions.h"
-#include "../include/ok.h"
+#include "../include/utilitaire.h"
 
 void test_addition() {
     printf("Test addition... ");

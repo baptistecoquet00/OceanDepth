@@ -2,7 +2,7 @@
 #include <assert.h>
 #include "../include/combat.h"
 #include "../include/joueur.h"
-#include "../include/ok.h"
+#include "../include/utilitaire.h"
 
 void test_combat_calcul_degats() {
     Combat_plongeur nv_plongeur_combat = {
@@ -46,13 +46,13 @@ void test_combat_calcul_fatigue(){
 
 // TODO
 void test_combat_calcul_oxygene(){
-     Combat_plongeur nv_plongeur_combat = {
-        .nb_attaque_par_tour = NB_MAXIMUM_ATTAQUE_PAR_TOUR,
-        .attaque_normale = 15,
-        .attaque_special = 18,
-        .competence_special = 8,
-        .gestion_fatigue_vie = nouveau_plongeur()
-    };
+    //  Combat_plongeur nv_plongeur_combat = {
+    //     .nb_attaque_par_tour = NB_MAXIMUM_ATTAQUE_PAR_TOUR,
+    //     .attaque_normale = 15,
+    //     .attaque_special = 18,
+    //     .competence_special = 8,
+    //     .gestion_fatigue_vie = nouveau_plongeur()
+    // };
     printf("Test pour le calcul d'oxygene... ");
 
     ok();
