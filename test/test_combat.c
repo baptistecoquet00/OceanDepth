@@ -49,7 +49,7 @@ void test_combat_calcul_oxygene(){
     ok();
 }
 
-
+// test combat
 int main() {
     debut_test();
     test_combat_calcul_degats();
