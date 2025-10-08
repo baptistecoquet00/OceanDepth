@@ -1,10 +1,9 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -g -std=c99 -O1
+CFLAGS = -Wall -Wextra -g -std=c99 -O1 -I../src
 
 # Chemins
 SRCDIR = ../src
-SOURCES = $(wildcard $(SRCDIR)/*.c)
-SOURCES := $(filter-out $(SRCDIR)/main.c, $(SOURCES))
+OBJDIR = ../obj
 
 # Fichiers test
 TEST_SOURCES = $(wildcard test_*.c)
@@ -12,13 +11,13 @@ TEST_EXECUTABLES = $(TEST_SOURCES:.c=.exe)
 
 all: run_tests
 
-# Compiler directement tous les .c ensemble
-%.exe: %.c $(SOURCES)
-	$(CC) $(CFLAGS) $< $(SOURCES) -o $@
+# Compiler directement depuis les sources (plus simple !)
+%.exe: %.c
+	$(CC) $(CFLAGS) $< $(shell find $(SRCDIR) -name "*.c" ! -name "main.c") -o $@
 
 run_tests: $(TEST_EXECUTABLES)
 	@echo "=== LANCEMENT DES TESTS ==="
-	@for test in $^; do \
+	@for test in $(TEST_EXECUTABLES); do \
 		echo "----------------------------------------"; \
 		echo "Exécution de $$test..."; \
 		echo "----------------------------------------"; \
@@ -31,8 +30,6 @@ clean:
 	rm -f *.exe
 
 .PHONY: all run_tests clean
-
-
 # CC = gcc
 # CFLAGS = -Wall -Wextra -g -std=c99
 

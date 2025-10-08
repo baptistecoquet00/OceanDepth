@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include "../include/joueur.h"
-#include "../include/ok.h"
+#include "../include/utilitaire.h"
 
 void test_etat_perles(){
     Plongeur plongeur = nouveau_plongeur();

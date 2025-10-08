@@ -13,4 +13,8 @@ void debut_test(){
     printf("Début des tests...\n");
 }
 
+void separateur_sections(){
+    printf("========================\n");
+}
+
 #endif

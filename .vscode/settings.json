@@ -2,6 +2,9 @@
     "C_Cpp.errorSquiggles": "disabled",
     "files.associations": {
         "fonctions.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "utilitaire.h": "c",
+        "combat.h": "c",
+        "joueur.h": "c"
     }
 }

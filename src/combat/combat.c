@@ -1,13 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "../include/creatures.h"
-#include "../include/combat.h"
+#include "../../include/creatures.h"
+#include "../../include/combat.h"
 
 void afficher_combat_plongeur(Combat_plongeur combat_plongeur){
     printf("nombre d'attaque par tour : %d\n",combat_plongeur.nb_attaque_par_tour);
     printf("Attaque normale : %d\n",combat_plongeur.attaque_normale);
     printf("Attque spéciale : %d\n",combat_plongeur.attaque_special);
     printf("Competence spéciale : %d\n",combat_plongeur.competence_special);
+    printf("========================\n");
     afficher_plongeur(combat_plongeur.gestion_fatigue_vie);
    
 }
@@ -34,7 +35,10 @@ Combat_plongeur combat_calcul_fatigue(Combat_plongeur plongeur_combat){
 }
 
 //TODO
-Combat_plongeur combat_gestion_vie(int points_de_vie);
+Combat_plongeur combat_gestion_vie(Combat_plongeur plongeur_combat){
+    plongeur_combat.gestion_fatigue_vie.points_de_vie;
+    return plongeur_combat;
+};
 
 inline int attaque_normal(Combat_plongeur plongeur_combat){
     plongeur_combat.gestion_fatigue_vie.niveau_oxygene -= 2;
@@ -62,10 +66,10 @@ Combat_plongeur combat_gestion_oxygene(Combat_plongeur plongeur_combat){
     while (plongeur_combat.gestion_fatigue_vie.niveau_oxygene <= 0)
     {
         plongeur_combat.gestion_fatigue_vie.points_de_vie -=5;
-        printf("Point de vie avant la mort : %d\n",plongeur_combat.gestion_fatigue_vie.points_de_vie);
+        //printf("Point de vie avant la mort : %d\n",plongeur_combat.gestion_fatigue_vie.points_de_vie);
         if(plongeur_combat.gestion_fatigue_vie.points_de_vie <= 0){
             est_mort(plongeur_combat.gestion_fatigue_vie); 
-            affiche_est_mort();
+            //affiche_est_mort();
             break;
         }
     }
