@@ -44,6 +44,7 @@ void test_combat_calcul_fatigue(){
     ok();
 }
 
+// TODO
 void test_combat_calcul_oxygene(){
     printf("Test pour le calcul d'oxygene... ");
     ok();
