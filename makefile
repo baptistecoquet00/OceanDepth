@@ -1,12 +1,12 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -g -std=c99
+CFLAGS = -Wall -Wextra -g -std=c99 -O1
 
 TARGET = oceandepth
 SRCDIR = src
-TESTDIR = $(SRCDIR)/test
+TESTDIR = test
 
 SOURCES = $(wildcard $(SRCDIR)/*.c)
-SOURCES := $(filter-out $(SRCDIR)/main.c, $(SOURCES))
+#SOURCES := $(filter-out $(SRCDIR)/main.c, $(SOURCES))
 
 $(TARGET): $(SOURCES)
 	$(CC) $(CFLAGS) $(SOURCES) -o $(TARGET)
@@ -18,6 +18,8 @@ test:
 
 clean:
 	rm -f $(TARGET)
+	
+clean_test:
 	$(MAKE) -C $(TESTDIR) clean
 
 debug: CFLAGS += -DDEBUG

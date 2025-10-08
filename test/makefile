@@ -1,8 +1,8 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -g -std=c99
+CFLAGS = -Wall -Wextra -g -std=c99 -O1
 
 # Chemins
-SRCDIR = ..
+SRCDIR = ../src
 SOURCES = $(wildcard $(SRCDIR)/*.c)
 SOURCES := $(filter-out $(SRCDIR)/main.c, $(SOURCES))
 
