@@ -35,7 +35,10 @@ Combat_plongeur combat_calcul_fatigue(Combat_plongeur plongeur_combat){
 }
 
 //TODO
-Combat_plongeur combat_gestion_vie(int points_de_vie);
+Combat_plongeur combat_gestion_vie(Combat_plongeur plongeur_combat){
+    plongeur_combat.gestion_fatigue_vie.points_de_vie;
+    return plongeur_combat;
+};
 
 inline int attaque_normal(Combat_plongeur plongeur_combat){
     plongeur_combat.gestion_fatigue_vie.niveau_oxygene -= 2;

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "../include/combat.h"
 #include "../include/joueur.h"
+#include "../include/utilitaire.h"
 
 int main() {
     Combat_plongeur nv_plongeur_combat = {
@@ -13,24 +14,24 @@ int main() {
     };
     
     nv_plongeur_combat.gestion_fatigue_vie.niveau_fatigue = 5;
-    //printf("========================\n");
+    separateur_sections();
     afficher_plongeur(nv_plongeur_combat.gestion_fatigue_vie);
     
-    //printf("========================\n");
+    separateur_sections();
     afficher_combat_plongeur(nv_plongeur_combat);
     int degats_calculees = combat_calcul_degats(nv_plongeur_combat.attaque_special,nv_plongeur_combat.competence_special);
     printf("Degats infligés : %d\n",degats_calculees);
     nv_plongeur_combat = combat_calcul_fatigue(nv_plongeur_combat);
     printf("Nombre d'attaque par tour : %d\n",nv_plongeur_combat.nb_attaque_par_tour);
     
-    //printf("========================\n");
+    separateur_sections();
     nv_plongeur_combat.gestion_fatigue_vie.niveau_oxygene = 0;
     nv_plongeur_combat = combat_gestion_oxygene(nv_plongeur_combat);
     if(nv_plongeur_combat.gestion_fatigue_vie.points_de_vie <= 0){
         affiche_est_mort();
     }
     
-    //printf("========================\n");
+    separateur_sections();
     printf("Niveau d'oxygène : %d\n",nv_plongeur_combat.gestion_fatigue_vie.niveau_oxygene);
     return 0;
 }

@@ -19,6 +19,6 @@ typedef struct
 void afficher_combat_plongeur(Combat_plongeur combat_plongeur);
 int combat_calcul_degats(int attaque_joueurs, int bonus_arme);
 Combat_plongeur combat_calcul_fatigue(Combat_plongeur plongeur_combat);
-Combat_plongeur combat_gestion_vie(int points_de_vie);
+Combat_plongeur combat_gestion_vie(Combat_plongeur plongeur_combat);
 Combat_plongeur combat_gestion_oxygene(Combat_plongeur plongeur_combat);
 #endif
