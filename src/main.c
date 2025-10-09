@@ -3,6 +3,7 @@
 #include "../include/combat.h"
 #include "../include/joueur.h"
 #include "../include/utilitaire.h"
+#include "../include/interface_combat.h"
 
 int main() {
     Combat_plongeur nv_plongeur_combat = {
@@ -40,5 +41,6 @@ int main() {
     
     separateur_sections();
     printf("Niveau d'oxygène : %d\n",nv_plongeur_combat.gestion_fatigue_vie.niveau_oxygene);
+    afficher_interface_combat();
     return 0;
 }

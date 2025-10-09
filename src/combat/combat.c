@@ -25,11 +25,16 @@ int combat_calcul_degats(int attaque_joueur, int bonus_arme){
 
 Combat_plongeur combat_calcul_fatigue(Combat_plongeur plongeur_combat){
     int calcul_fatigue = plongeur_combat.gestion_fatigue_vie.niveau_fatigue; 
-    if(calcul_fatigue >= FATIGUE_NV_ZERO && calcul_fatigue <= FATIGUE_NV_UN){
+    if(calcul_fatigue >= FATIGUE_NV_ZERO && calcul_fatigue <= FATIGUE_NV_UN)
+    {
         plongeur_combat.nb_attaque_par_tour = NB_MAXIMUM_ATTAQUE_PAR_TOUR;
-    }else if(calcul_fatigue >= FATIGUE_NV_DEUX && calcul_fatigue <= FATIGUE_NV_TROIS){
+    }
+    else if(calcul_fatigue >= FATIGUE_NV_DEUX && calcul_fatigue <= FATIGUE_NV_TROIS)
+    {
         plongeur_combat.nb_attaque_par_tour = NB_MOYEN_ATTAQUE_PAR_TOUR;
-    }else if(calcul_fatigue >= FATIGUE_NV_QUATRE && calcul_fatigue <=FATIGUE_NV_CINQ){
+    }
+    else if(calcul_fatigue >= FATIGUE_NV_QUATRE && calcul_fatigue <=FATIGUE_NV_CINQ)
+    {
         plongeur_combat.nb_attaque_par_tour = NB_BAS_ATTAQUE_PAR_TOUR;
     }
 
@@ -38,8 +43,18 @@ Combat_plongeur combat_calcul_fatigue(Combat_plongeur plongeur_combat){
 
 //TODO
 Combat_plongeur combat_gestion_vie(Combat_plongeur plongeur_combat){
+    CreatureMarine creature;
+    if(creature.attaque_maximale) 
+    {
+        plongeur_combat.gestion_fatigue_vie.points_de_vie -= creature.attaque_maximale;
+    }
+    else if(creature.attaque_minimale)
+    {
+        plongeur_combat.gestion_fatigue_vie.points_de_vie -= creature.attaque_minimale;
+    }
+
     if(est_mort(plongeur_combat.gestion_fatigue_vie)==0){
-        return plongeur_combat;
+        return plongeur_combat;    
     }
     return plongeur_combat;
 };
