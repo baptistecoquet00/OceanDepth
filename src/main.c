@@ -11,9 +11,9 @@ int main() {
 
     generer_creatures(tab, &nb, 100); 
 
-    for (int i = 0; i < nb; i++) {
-        afficher_creature(&tab[i]);
-    }
+    // for (int i = 0; i < nb; i++) {
+    //     afficher_creature(&tab[i]);
+    // }
 
     Combat_plongeur nv_plongeur_combat = {
         .nb_attaque_par_tour = NB_MAXIMUM_ATTAQUE_PAR_TOUR,
