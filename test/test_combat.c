@@ -46,15 +46,21 @@ void test_combat_calcul_fatigue(){
 
 // TODO
 void test_combat_calcul_oxygene(){
-    //  Combat_plongeur nv_plongeur_combat = {
-    //     .nb_attaque_par_tour = NB_MAXIMUM_ATTAQUE_PAR_TOUR,
-    //     .attaque_normale = 15,
-    //     .attaque_special = 18,
-    //     .competence_special = 8,
-    //     .gestion_fatigue_vie = nouveau_plongeur()
-    // };
+     Combat_plongeur nv_plongeur_combat = {
+        .nb_attaque_par_tour = NB_MAXIMUM_ATTAQUE_PAR_TOUR,
+        .attaque_normale = 15,
+        .attaque_special = 18,
+        .competence_special = 8,
+        .gestion_fatigue_vie = nouveau_plongeur()
+    };
+    
+    nv_plongeur_combat.gestion_fatigue_vie.niveau_oxygene = ZERO_OXYGENE;
+    
+    nv_plongeur_combat = combat_gestion_oxygene(nv_plongeur_combat);
+    
     printf("Test pour le calcul d'oxygene... ");
-
+    assert(nv_plongeur_combat.gestion_fatigue_vie.points_de_vie==0);
+    assert(nv_plongeur_combat.gestion_fatigue_vie.niveau_oxygene==0);
     ok();
 }
 

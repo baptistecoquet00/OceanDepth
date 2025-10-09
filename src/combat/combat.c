@@ -15,7 +15,9 @@ void afficher_combat_plongeur(Combat_plongeur combat_plongeur){
 
 int combat_calcul_degats(int attaque_joueur, int bonus_arme){
     //CreatureMarine creature = nouvelle_creature();
-    int defense_creature = 10;
+    CreatureMarine creature;
+    creature.defense = 10;
+    int defense_creature = creature.defense;
     int degats = (attaque_joueur + bonus_arme) - defense_creature;
     if(degats < 1) degats = 1; 
     return degats;
@@ -36,7 +38,9 @@ Combat_plongeur combat_calcul_fatigue(Combat_plongeur plongeur_combat){
 
 //TODO
 Combat_plongeur combat_gestion_vie(Combat_plongeur plongeur_combat){
-    plongeur_combat.gestion_fatigue_vie.points_de_vie;
+    if(est_mort(plongeur_combat.gestion_fatigue_vie)==0){
+        return plongeur_combat;
+    }
     return plongeur_combat;
 };
 
@@ -61,19 +65,19 @@ Combat_plongeur combat_gestion_oxygene(Combat_plongeur plongeur_combat){
     }
     
     plongeur_combat.gestion_fatigue_vie.niveau_oxygene = oxygene_vide(plongeur_combat.gestion_fatigue_vie);
-    oxygene_critique(plongeur_combat.gestion_fatigue_vie);
+    //oxygene_critique(plongeur_combat.gestion_fatigue_vie);
 
     while (plongeur_combat.gestion_fatigue_vie.niveau_oxygene <= 0)
     {
         plongeur_combat.gestion_fatigue_vie.points_de_vie -=5;
         //printf("Point de vie avant la mort : %d\n",plongeur_combat.gestion_fatigue_vie.points_de_vie);
-        if(plongeur_combat.gestion_fatigue_vie.points_de_vie <= 0){
-            est_mort(plongeur_combat.gestion_fatigue_vie); 
-            //affiche_est_mort();
+        
+        if(est_mort(plongeur_combat.gestion_fatigue_vie)==0){
             break;
         }
     }
-    afficher_plongeur(plongeur_combat.gestion_fatigue_vie);
+    //afficher_plongeur(plongeur_combat.gestion_fatigue_vie);
+    //printf("Niveau d'oxygène : %d\n",plongeur_combat.gestion_fatigue_vie.niveau_oxygene);
     return plongeur_combat;
 }
 
