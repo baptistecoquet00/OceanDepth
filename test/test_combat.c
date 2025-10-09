@@ -3,6 +3,7 @@
 #include "../include/combat.h"
 #include "../include/joueur.h"
 #include "../include/utilitaire.h"
+#include "../include/creatures.h"
 
 void test_combat_calcul_degats() {
     Combat_plongeur nv_plongeur_combat = {
@@ -46,7 +47,7 @@ void test_combat_calcul_fatigue(){
 
 // TODO
 void test_combat_calcul_oxygene(){
-     Combat_plongeur nv_plongeur_combat = {
+    Combat_plongeur nv_plongeur_combat = {
         .nb_attaque_par_tour = NB_MAXIMUM_ATTAQUE_PAR_TOUR,
         .attaque_normale = 15,
         .attaque_special = 18,
@@ -64,12 +65,34 @@ void test_combat_calcul_oxygene(){
     ok();
 }
 
+void test_combat_calcul_vie(){
+    Combat_plongeur nv_plongeur_combat = {
+        .nb_attaque_par_tour = NB_MAXIMUM_ATTAQUE_PAR_TOUR,
+        .attaque_normale = 15,
+        .attaque_special = 18,
+        .competence_special = 8,
+        .gestion_fatigue_vie = nouveau_plongeur()
+    };
+
+    CreatureMarine creature;
+
+    // int nb = 1;
+    // generer_creatures(creature, &nb, 100);
+    creature.attaque_maximale = 10;
+    creature.attaque_minimale = 5;
+    nv_plongeur_combat = combat_gestion_vie(nv_plongeur_combat,creature);
+    printf("Test pour le calcul de vie... ");
+    assert(nv_plongeur_combat.gestion_fatigue_vie.points_de_vie==nv_plongeur_combat.gestion_fatigue_vie.points_de_vie_max-15);
+    ok();
+}
+
 // test combat
 int main() {
     debut_test();
     test_combat_calcul_degats();
     test_combat_calcul_fatigue();
     test_combat_calcul_oxygene();
+    test_combat_calcul_vie();
     tous_test_passe();
     return 0;
 }

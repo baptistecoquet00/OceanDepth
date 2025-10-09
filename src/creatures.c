@@ -10,7 +10,7 @@ void generer_creatures(CreatureMarine *tableau, int *nb_creatures, int profondeu
         return;
     srand((unsigned)time(NULL)); // permet d'avoir les creatures aléatoirment
 
-    for (int i; i < *nb_creatures; i++)
+    for (int i = 0; i < *nb_creatures; i++)
     {
         CreatureMarine *creature = &tableau[i];
         creature->id = i + 1;
@@ -78,7 +78,7 @@ void generer_creatures(CreatureMarine *tableau, int *nb_creatures, int profondeu
             break;
 
         default:
-            strcpy(c->nom, "Créature inconnue");
+            strcpy(creature->nom, "Créature inconnue");
             creature->points_de_vie_max = 10;
             creature->points_de_vie_actuels = 10;
             creature->attaque_minimale = 1;
