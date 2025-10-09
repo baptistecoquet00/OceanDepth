@@ -3,6 +3,7 @@
 #include "../include/combat.h"
 #include "../include/joueur.h"
 #include "../include/utilitaire.h"
+#include "../include/interface_combat.h"
 
 int main() {
     CreatureMarine tab[5];
@@ -36,11 +37,19 @@ int main() {
     separateur_sections();
     nv_plongeur_combat.gestion_fatigue_vie.niveau_oxygene = 0;
     nv_plongeur_combat = combat_gestion_oxygene(nv_plongeur_combat);
+    
+    if(nv_plongeur_combat.gestion_fatigue_vie.niveau_oxygene == ZERO_OXYGENE){
+        oxygene_critique(nv_plongeur_combat.gestion_fatigue_vie);
+    }
+
     if(nv_plongeur_combat.gestion_fatigue_vie.points_de_vie <= 0){
         affiche_est_mort();
     }
+
+    afficher_plongeur(nv_plongeur_combat.gestion_fatigue_vie);
     
     separateur_sections();
     printf("Niveau d'oxygène : %d\n",nv_plongeur_combat.gestion_fatigue_vie.niveau_oxygene);
+    afficher_interface_combat();
     return 0;
 }

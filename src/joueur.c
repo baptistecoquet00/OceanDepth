@@ -9,7 +9,7 @@ Plongeur nouveau_plongeur() {
     plongeur.points_de_vie_max = POINT_DE_VIE_MAX;
     plongeur.niveau_oxygene = OXYGENE_MAX;
     plongeur.niveau_oxygene_max = OXYGENE_MAX;
-    plongeur.niveau_fatigue = 0;
+    plongeur.niveau_fatigue = FATIGUE_NV_ZERO;
     plongeur.perles = 0;
     return plongeur;
 }
@@ -32,8 +32,7 @@ int etat_vie(Plongeur plongeur){
 }
 
 int est_mort(Plongeur plongeur){
-    if(plongeur.points_de_vie == 0){
-        //printf("VOUS ETES MORT !!!!!\n");
+    if(plongeur.points_de_vie <= ZERO_POINT_DE_VIE){
         return 0;
     }
     return -1;
