@@ -4,29 +4,28 @@
 #include <stddef.h>
 
 
-
 #if __STDC_VERSION__ >= 201112L
     #include <stdalign.h>
-    #define ARENE_ALIGNEMENT (type) alignof(type)
+    #define ARENE_ALIGNEMENT(type) alignof(type)
 #else
-    #define ARENE_ALIGNEMENT (type) offsetof(struct { char* c; type d;}, d)
+    #define ARENE_ALIGNEMENT(type) offsetof(struct { char* c; type d;}, d)
 #endif
 
 #ifndef ARENE_DEFAUT_ALIGNEMENT
-    #define ARENE_DEFAUT_ALIGNEMENT ARENE_ALIGNEMENT(int)
+    #define ARENE_DEFAUT_ALIGNEMENT ARENE_ALIGNEMENT(size_t)
 #endif
 
 typedef struct 
 {
     char* region;
-    int index;
-    int taille_total;
+    size_t index;
+    size_t taille_total;
 } Arene;
 
-Arene* nouvelle_arene(int taille);
-Arene* etendre_arene(Arene* arene,int taille);
-void* arene_allocation(Arene* arene,int taille);
-void* arene_allocation_alignee(Arene* arene, int taille, int alignement);
+Arene* nouvelle_arene(size_t taille);
+Arene* etendre_arene(Arene* arene,size_t taille);
+void* arene_allocation(Arene* arene,size_t taille);
+void* arene_allocation_alignee(Arene* arene,size_t taille, unsigned int alignement);
 void arene_nettoyer(Arene* arene);
 void arene_detruite(Arene* arene);
 
@@ -52,20 +51,23 @@ void arene_detruite(Arene* arene);
     #define ARENE_COPIEMROIRE memcpy
 #endif
 
-Arene* nouvelle_arene(int taille){
+Arene* nouvelle_arene(size_t taille){
     Arene* arene;
 
-    if(taille == 0) {
+    if(taille == 0) 
+    {
         return NULL;
     }
 
     arene = (Arene*)ARENE_MALLOC(sizeof(Arene));
-    if(arene == NULL){
+    if(arene == NULL)
+    {
         return NULL;
     }
 
     arene->region = ARENE_MALLOC(taille);
-    if(arene->region == NULL){
+    if(arene->region == NULL)
+    {
         ARENE_LIBRE(arene);
         return NULL;
     }
@@ -76,57 +78,62 @@ Arene* nouvelle_arene(int taille){
     return arene;
 }
 
-Arene* etendre_arene(Arene* arene,int taille){
-    if(arene == NULL || taille <= arene->taile){
+Arene* etendre_arene(Arene* arene,size_t taille){
+    if(arene == NULL || taille <= arene->taille_total)
+    {
         return NULL;
     }
 
     arene->region = ARENE_REALLOC(arene->region, taille);
 
-    if(arene->region == NULL){
+    if(arene->region == NULL)
+    {
         return NULL;
     }
 
     arene->taille_total = taille;
-    return arena;
+    return arene;
 }
 
-void* arene_allocation(Arene* arene,int taille){
+void* arene_allocation(Arene* arene, size_t taille){
     return arene_allocation_alignee(arene,taille,ARENE_DEFAUT_ALIGNEMENT);
 }
 
-void* arene_allocation_alignee(Arene* arene, int taille,unsigned int alignement){
-    unsigned int compenser;
+void* arene_allocation_alignee(Arene* arene, size_t taille,unsigned int alignement){
+    unsigned int rembourrage = 0;
 
-    if(taille == 0){
-        return NULL;
-    }
-    
-    if(arene == NULL || arene->region == NULL){
+    if(arene == NULL || arene->region == NULL || taille == 0)
+    {
         return NULL;
     }
 
-    if( alignement != 0){
-        compenser = (arene->region + taille) % alignement;
-        if(compenser > 0){
-            arene->index = arene->region - compenser + alignement;
+    if( alignement != 0)
+    {
+        size_t compenser = (size_t)(arene->region + arene->index) % alignement;
+        if(compenser > 0)
+        {
+            rembourrage =  alignement - compenser;
         } 
-    }else {
-        compenser = 0;
     }
 
-    if(arene->taille_total - (arene->index + compenser) < taille){
+    if(arene->index + rembourrage + taille > arene->taille_total)
+    {
         return NULL;
     }
-    arene->taille_total += taille;
-    return arene->region + (arene->index - taille);
+
+    void* ptr = arene->region + arene->index + rembourrage;
+    arene->index += rembourrage + taille;
+    return ptr;
 }
+
 void arene_nettoyer(Arene* arene){
-    if(arene == NULL){
+    if(arene == NULL)
+    {
         return;
     }
     arene->index = 0;
 }
+
 void arene_detruite(Arene* arene){
     if(arene == NULL){
         return;
