@@ -135,7 +135,7 @@ void arene_detruite(Arene* arene){
         ARENE_LIBRE(arene->region);
     }
 
-    ARENE_LIBRE(arene->region);
+    ARENE_LIBRE(arene);
 }
 
 #endif /*ARENE_IMPLEMENTATION*/
