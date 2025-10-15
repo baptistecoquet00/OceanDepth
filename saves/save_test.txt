@@ -1,0 +1,5 @@
+OCEANDEPTHS_SAVE_V1
+PLONGEUR|92|100|98|100|0|0|Harpon Rouille|Neoprene Basic
+INVENTAIRE|3|Capsule_O2:2|Trousse_Soin:1|Stimulant:1
+POSITION|50
+CREATURES|1|Crabe Géant:100:100:12:20:12

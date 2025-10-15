@@ -1,6 +1,10 @@
 {
     "C_Cpp.errorSquiggles": "disabled",
     "files.associations": {
-        "fonctions.h": "c"
+        "fonctions.h": "c",
+        "stdio.h": "c",
+        "t_try1.C": "cpp",
+        "ranges": "c",
+        "variant": "c"
     }
 }

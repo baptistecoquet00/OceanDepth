@@ -1,26 +1,35 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -g -std=c99
-
-TARGET = oceandepth
+CFLAGS = -Wall -Wextra -std=c99 -Iinclude
 SRCDIR = src
-TESTDIR = $(SRCDIR)/test
+INCDIR = include
+OBJ = $(SRCDIR)/main.o $(SRCDIR)/joueur.o $(SRCDIR)/creatures.o $(SRCDIR)/combat.o $(SRCDIR)/inventaire.o $(SRCDIR)/sauvegarde.o $(SRCDIR)/carte.o
+EXEC = oceandepths
 
-SOURCES = $(wildcard $(SRCDIR)/*.c)
-SOURCES := $(filter-out $(SRCDIR)/main.c, $(SOURCES))
+all: $(EXEC)
 
-$(TARGET): $(SOURCES)
-	$(CC) $(CFLAGS) $(SOURCES) -o $(TARGET)
+$(EXEC): $(OBJ)
+	$(CC) $(CFLAGS) -o $@ $^
 
-# CORRECTION : Appeler la cible 'run' au lieu de 'all'
-test:
-	@echo "=== COMPILATION ET EXÉCUTION DES TESTS ==="
-	$(MAKE) -C $(TESTDIR) run_tests
+$(SRCDIR)/main.o: $(SRCDIR)/main.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(SRCDIR)/joueur.o: $(SRCDIR)/joueur.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(SRCDIR)/creatures.o: $(SRCDIR)/creatures.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(SRCDIR)/combat.o: $(SRCDIR)/combat.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(SRCDIR)/inventaire.o: $(SRCDIR)/inventaire.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(SRCDIR)/sauvegarde.o: $(SRCDIR)/sauvegarde.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(SRCDIR)/carte.o: $(SRCDIR)/carte.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(TARGET)
-	$(MAKE) -C $(TESTDIR) clean
-
-debug: CFLAGS += -DDEBUG
-debug: $(TARGET)
-
-.PHONY: clean debug test
+	rm -f $(SRCDIR)/*.o $(EXEC)
