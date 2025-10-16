@@ -6,14 +6,13 @@
 
 typedef struct 
 {
-    // Un champ qui permet de voir le nombre de dégats infligées
-    // un champ permet de voir le nombre de dégats subits
-    // un champ qui permet de voir la fatigue
-    //un champ qui permet de voir l'oxygene
-    char interface[1024][1024];
+    Combat_plongeur plongeur_combat;// champs degats infligés , nb_attaque_tours
+    Plongeur plongeur; // Champs fatigue, oxygene, points de vie
+    char interface[9][62]; // taille de l'interface
 }Interface_combat;
 
 Interface_combat nouvelle_interface_combat();
+void afficher_interface_combat_exemple();
 void afficher_interface_combat(/*Interface_combat interface,Combat_plongeur plongeur_combat, CreatureMarine creature*/);
 
 #endif

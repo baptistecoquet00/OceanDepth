@@ -23,9 +23,6 @@ void test_nouvelle_arene(){
     arene_detruite(arene_null);
     arene_detruite(arene_non_null);
     ok();
-
-    
-
 }
 
 void test_etendre_arene(){
@@ -44,8 +41,6 @@ void test_etendre_arene(){
     assert(etendre_arene(NULL,13)==NULL);
     arene_detruite(arene);
     ok();
-
-    
 }
 
 void test_arene_allocation(){

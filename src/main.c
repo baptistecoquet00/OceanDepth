@@ -57,6 +57,6 @@ int main() {
     
     separateur_sections();
     printf("Niveau d'oxygène : %d\n",nv_plongeur_combat->gestion_fatigue_vie->niveau_oxygene);
-    afficher_interface_combat();
+    afficher_interface_combat_exemple();
     return 0;
 }
