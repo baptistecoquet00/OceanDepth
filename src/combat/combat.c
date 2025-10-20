@@ -9,6 +9,7 @@ Combat_plongeur* nouveau_combat_plongeur(Plongeur* plongeur){
     plongeur_combat->nb_attaque_par_tour = NB_MAXIMUM_ATTAQUE_PAR_TOUR;
     plongeur_combat->attaque_normale = 0;
     plongeur_combat->attaque_special = 0;
+    plongeur_combat->competence_special = 0;
     plongeur_combat->gestion_fatigue_vie = plongeur;
     return plongeur_combat;
 }
@@ -113,3 +114,9 @@ void combat_gestion_oxygene(Combat_plongeur* plongeur_combat){
     //return plongeur_combat;
 }
 
+
+void free_combat_plongeur(Combat_plongeur* plongeur_combat){
+    if (plongeur_combat != NULL) {        
+        free(plongeur_combat);
+    }
+}
