@@ -35,5 +35,6 @@ void affiche_est_mort();
 int vie_maximum(Plongeur* plongeur);
 int oxygene_vide(Plongeur* plongeur);
 void oxygene_critique(Plongeur* plongeur);
+void free_plongeur(Plongeur* plongeur);
 
 #endif

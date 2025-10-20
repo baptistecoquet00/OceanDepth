@@ -62,3 +62,9 @@ void oxygene_critique(Plongeur* plongeur){
     }
     return;
 }
+
+void free_plongeur(Plongeur* plongeur) {
+    if (plongeur != NULL) {
+        free(plongeur);
+    }
+}

@@ -42,7 +42,7 @@ int main() {
     printf("Nombre d'attaque par tour : %d\n",nv_plongeur_combat->nb_attaque_par_tour);
     
     separateur_sections();
-    nv_plongeur_combat->gestion_fatigue_vie->niveau_oxygene = 0;
+    nv_plongeur_combat->gestion_fatigue_vie->niveau_oxygene = 100;
     combat_gestion_oxygene(nv_plongeur_combat);
     
     if(nv_plongeur_combat->gestion_fatigue_vie->niveau_oxygene <= OXYGENE_CRITIQUE){
@@ -57,6 +57,11 @@ int main() {
     
     separateur_sections();
     printf("Niveau d'oxygène : %d\n",nv_plongeur_combat->gestion_fatigue_vie->niveau_oxygene);
-    afficher_interface_combat_exemple();
+    afficher_interface_combat_exemple(nv_plongeur_combat);
+    afficher_interface_combat();
+
+    free_combat_plongeur(nv_plongeur_combat);
+    free_plongeur(nv_plongeur);
+    
     return 0;
 }
