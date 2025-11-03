@@ -19,8 +19,8 @@ typedef struct
 Combat_plongeur* nouveau_combat_plongeur(Plongeur* plongeur);
 void afficher_combat_plongeur(Combat_plongeur* combat_plongeur);
 int combat_calcul_degats(int attaque_joueurs, int bonus_arme);
-void combat_calcul_fatigue(Combat_plongeur* plongeur_combat);
-void combat_gestion_vie(Combat_plongeur* plongeur_combat,CreatureMarine* creature);
-void combat_gestion_oxygene(Combat_plongeur* plongeur_combat);
+void combat_plongeur_calcul_fatigue(Combat_plongeur* plongeur_combat);
+void combat_plongeur_gestion_vie(Combat_plongeur* plongeur_combat,CreatureMarine* creature);
+void combat_plongeur_gestion_oxygene(Combat_plongeur* plongeur_combat);
 void free_combat_plongeur(Combat_plongeur* plongeur_combat);
 #endif
