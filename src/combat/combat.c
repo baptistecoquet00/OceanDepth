@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "../../include/creatures.h"
 #include "../../include/combat.h"
+#include "../include/tour_par_tour.h"
 
 
 Combat_plongeur* nouveau_combat_plongeur(Plongeur* plongeur){
@@ -34,7 +35,7 @@ int combat_calcul_degats(int attaque_joueur, int bonus_arme){
     return degats;
 }
 
-void combat_calcul_fatigue(Combat_plongeur* plongeur_combat){
+void combat_plongeur_calcul_fatigue(Combat_plongeur* plongeur_combat){
     int calcul_fatigue = plongeur_combat->gestion_fatigue_vie->niveau_fatigue; 
     
     if(calcul_fatigue >= FATIGUE_NV_ZERO && calcul_fatigue <= FATIGUE_NV_UN)
@@ -54,8 +55,7 @@ void combat_calcul_fatigue(Combat_plongeur* plongeur_combat){
     //return plongeur_combat;
 }
 
-//TODO
-void combat_gestion_vie(Combat_plongeur* plongeur_combat, CreatureMarine* creature){
+void combat_plongeur_gestion_vie(Combat_plongeur* plongeur_combat, CreatureMarine* creature){
     
     if(creature->attaque_maximale) 
     {
@@ -85,7 +85,7 @@ inline int competence_speciale(Combat_plongeur* plongeur_combat){
     return plongeur_combat->gestion_fatigue_vie->niveau_oxygene;
 }
 
-void combat_gestion_oxygene(Combat_plongeur* plongeur_combat){
+void combat_plongeur_gestion_oxygene(Combat_plongeur* plongeur_combat){
 
     if(plongeur_combat->attaque_normale){
         plongeur_combat->gestion_fatigue_vie->niveau_oxygene += attaque_normal(plongeur_combat);
@@ -114,6 +114,34 @@ void combat_gestion_oxygene(Combat_plongeur* plongeur_combat){
     //return plongeur_combat;
 }
 
+void Systeme_combat(Combat_plongeur *plongeur_combat){
+    TourJoueur tour;
+    tour_init(&tour);
+
+    while (/* combat actif */) {
+        
+        if (tour_est_au_joueur(&tour)) {
+            // Afficher interface "En attente de votre action..."
+            
+            if (tour_attente_action(&tour)) {
+                // Le joueur n'a pas encore agi
+                // Afficher les boutons/bindings d'action
+                printf("Choisissez une action...\n");
+                
+            } else {
+                // Le joueur a agi, on passe à l'ennemi
+                tour_passer_ennemi(&tour);
+            }
+            
+        } else {
+            // Tour de l'ennemi
+            executer_ia_ennemi();
+            
+            // Après l'ennemi, on passe au tour suivant
+            tour_suivant(&tour);
+        }
+    }
+}
 
 void free_combat_plongeur(Combat_plongeur* plongeur_combat){
     if (plongeur_combat != NULL) {        
