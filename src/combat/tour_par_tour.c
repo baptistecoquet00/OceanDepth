@@ -1,4 +1,4 @@
-#include "../include/tour_par_tour.h"
+#include "../../include/tour_par_tour.h"
 
 void nouveau_tour(TourJoueur* tour){
     tour->tour_joueur = true;
