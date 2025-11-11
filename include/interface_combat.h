@@ -1,21 +1,37 @@
 #ifndef INTERFACE_COMBAT_H
 #define INTERFACE_COMBAT_H
-#include "combat.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+
 #include "joueur.h"
 #include "creatures.h"
+#include "combat.h"
+#include "interface_combat.h"
+#include "interface_stats_joueur.h"
 
-#define LARGEUR_INTERFACE 9
-#define LONGEUR_INTERFACE 62
+typedef struct {
+    Fenetre *combat_win;
+    Fenetre *actions_win;
+    Fenetre *stats_win;
+} InterfaceCombat;
 
-typedef struct 
-{
-    Combat_plongeur plongeur_combat;// champs degats infligés , nb_attaque_tours
-    Plongeur plongeur; // Champs fatigue, oxygene, points de vie
-    char interface[LARGEUR_INTERFACE][LONGEUR_INTERFACE]; // taille de l'interface
-}Interface_combat;
+// Initialisation
+InterfaceCombat* creer_interface_combat(GestionFenetre *gf);
 
-Interface_combat nouvelle_interface_combat();
-void afficher_interface_combat_exemple(Combat_plongeur* plongeur_combat);//exemple
-void afficher_interface_combat(/*Interface_combat interface,Combat_plongeur plongeur_combat, CreatureMarine creature*/);
+// Mise à jour
+void mettre_a_jour_interface_combat(InterfaceCombat *interface, 
+                                   Combat_plongeur *plongeur, 
+                                   CreatureMarine *ennemi);
+
+// Affichage des actions disponibles
+void afficher_actions_disponibles(InterfaceCombat *interface);
+
+// Affichage des messages de combat
+void afficher_message_combat(InterfaceCombat *interface, const char *format, ...);
+
+// Nettoyage
+void detruire_interface_combat(InterfaceCombat *interface);
 
 #endif

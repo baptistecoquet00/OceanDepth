@@ -5,7 +5,7 @@
 
 
 void afficher_stats_joueur(GestionFenetre *gf, Arene *jeu_arene, Plongeur *joueur) {
-    Fenetre *stats_win = gf_creer_fenetre(gf, 5, 5, 90, 6, "STATISTIQUES");
+    Fenetre *stats_win = gf_creer_fenetre(gf, 5, 5, 90, 10, "STATISTIQUES");
     
     printf("DEBUG: Début afficher_stats_joueur\n");
 
@@ -25,7 +25,7 @@ void afficher_stats_joueur(GestionFenetre *gf, Arene *jeu_arene, Plongeur *joueu
     float pourcentage_fatigue = (float)joueur->niveau_fatigue / 5.0f;
     
     // Création des barres visuelles
-    char barre_vie[50], barre_oxygene[50], barre_fatigue[20];
+    char barre_vie[50], barre_oxygene[50], barre_fatigue[10];
     
     // Barre de vie [xxxxxxxxxx.....]
     creer_barre_visuelle(barre_vie, sizeof(barre_vie), pourcentage_vie, 30);
@@ -72,6 +72,8 @@ void mettre_a_jour_stats_joueur(Fenetre *stats_win, Plongeur *joueur) {
     afficher_fenetref(stats_win, 50, 2, "Perles: %d", joueur->perles);
 }
 
+
+
 void creer_barre_visuelle(char *buffer, size_t taille_buffer, float pourcentage, int longueur_totale) {
     int caracteres_remplis = (int)(pourcentage * longueur_totale);
     int caracteres_vides = longueur_totale - caracteres_remplis;
@@ -95,4 +97,3 @@ void creer_barre_visuelle(char *buffer, size_t taille_buffer, float pourcentage,
     if (pos < taille_buffer - 1) buffer[pos++] = ']';
     buffer[pos] = '\0';
 }
-

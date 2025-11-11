@@ -1,7 +1,7 @@
 #include "../include/joueur.h"
 #include "../include/utilitaire.h"
 #include "../include/interface_combat.h"
-
+#include "../include/systeme_combat.h"
 
 // main.c
 #include <stdio.h>
@@ -16,42 +16,23 @@
 #include "../include/combat.h"
 
 
-void afficher_combat_sous_marin(GestionFenetre *gf) {
-    // Création des fenêtres (utilise ton arène en interne)
-    Fenetre *combat_win = gf_creer_fenetre(gf, 5, 5, 70, 15, "COMBAT SOUS-MARIN");
-    
-    if (!combat_win) {
-        printf("Erreur création fenêtres!\n");
-        return;
-    }
-    
-    // Préparer l'interface de combat
-    fenetre_dessiner_bordure(combat_win);
- 
-    // Contenu fixe
-    afficher_fenetre(combat_win, 1, 1, "Vous attaquez le Requin-Tigre");
-    afficher_fenetre(combat_win, 25, 3, "PLONGEUR VS REQUIN");
-    afficher_fenetre(combat_win, 28, 4, "♠        🦈");
-    afficher_fenetre(combat_win, 20, 5, "---------> <---------");
-    
-    // Boucle de combat
-    for (int tour = 1; tour <= 3; tour++) {
-        // Efface les anciennes lignes de combat
-        afficher_fenetre(combat_win, 2, 7, "                                    ");
-        afficher_fenetre(combat_win, 2, 8, "                                    "); 
-        afficher_fenetre(combat_win, 2, 9, "                                    ");
-        afficher_fenetre(combat_win, 2, 10, "                                   ");
-        
-        // Nouveau contenu
-        afficher_fenetref(combat_win, 2, 7, "Tour %d", tour);
-        afficher_fenetref(combat_win, 2, 8, "Dégâts infligés: %d points", tour * 5);
-        afficher_fenetref(combat_win, 2, 9, "Requin riposte: -%d PV", tour * 6);
-        
-        gf_rendu(gf);
-        sleep(2);
-    }
-}
 
+CreatureMarine* creer_requin_tigre() {
+    CreatureMarine *requin = malloc(sizeof(CreatureMarine));
+    
+    requin->id = 1;
+    strncpy(requin->nom, "Requin-Tigre", sizeof(requin->nom)-1);
+    requin->points_de_vie_max = 100;
+    requin->points_de_vie_actuels = 100;
+    requin->attaque_minimale = 10;
+    requin->attaque_maximale = 20;
+    requin->defense = 8;
+    requin->vitesse = 15;
+    strncpy(requin->effet_special, "saignement", sizeof(requin->effet_special)-1);
+    requin->est_vivant = 1;
+    
+    return requin;
+}
 
 
 int main() {
@@ -97,24 +78,42 @@ int main() {
     // free_plongeur(nv_plongeur);
 
     // Initialisation
-    srand(time(NULL));  // Pour l'aléatoire des dégâts
+    srand(time(NULL));
     
-    Arene *jeu_arene = nouvelle_arene(1024 * 1024);
+    Arene *jeu_arene = nouvelle_arene(1024 * 1024); // 1MB
     GestionFenetre gf;
     nouvelle_gf(&gf, jeu_arene);
     
+    // Création du joueur
     Plongeur *nv_plongeur = nouveau_plongeur();
     Combat_plongeur *nv_plongeur_combat = nouveau_combat_plongeur(nv_plongeur);
+
+    // Création de l'ennemi
+    CreatureMarine *ennemi = creer_requin_tigre();
     
-    // Initialisation du joueur
-    nv_plongeur_combat->gestion_fatigue_vie->points_de_vie = 100;
-    nv_plongeur_combat->gestion_fatigue_vie->niveau_oxygene = 100;
+    printf("=== LANCEMENT DU COMBAT ===\n");
+    printf("Joueur: %d PV, %d O2\n", 
+           nv_plongeur_combat->gestion_fatigue_vie->points_de_vie,
+           nv_plongeur_combat->gestion_fatigue_vie->niveau_oxygene);
+    printf("Ennemi: %s (%d PV)\n", ennemi->nom, ennemi->points_de_vie_actuels);
     
-    // Lancement du combat
-    Systeme_combat(nv_plongeur_combat, &gf/*, jeu_arene*/);
+    // Création et exécution du système de combat
+    SystemeCombat *combat = creer_systeme_combat(&gf, nv_plongeur_combat, ennemi);
+    executer_combat(combat);
     
+    // Nettoyage
+    printf("Combat terminé. Nettoyage...\n");
+    
+    // Libération mémoire
+    free(ennemi);
     free_combat_plongeur(nv_plongeur_combat);
     free_plongeur(nv_plongeur);
+
+    // Note: Tu devras implémenter detruire_systeme_combat() selon ta gestion mémoire
+    detruire_systeme_combat(combat);
+    
     arene_detruite(jeu_arene);
+    
+    printf("=== FIN DU PROGRAMME ===\n");
     return 0;
 }
