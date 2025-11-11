@@ -3,6 +3,8 @@
 
 #include <stddef.h>
 #include <stdbool.h>
+
+// #define ARENE_IMPLEMENTATION
 #include "gm.h"
 
 #define MAX_FENETRE 10
@@ -33,6 +35,8 @@ void gf_rendu(GestionFenetre *gf);
 void fenetre_nettoyer(Fenetre *fenetre);
 void fenetre_dessiner_bordure(Fenetre *fenetre);
 void afficher_fenetre(Fenetre *fenetre, int x,int y, const char *texte);
-void afficher_fenetre(Fenetre *fenetre,int x, int y , const char *format,...);
+void afficher_fenetref(Fenetre *fenetre,int x, int y , const char *format,...);
 
+void fenetre_dessiner_bordure_debug(Fenetre *fen);
+void gf_rendu_debug(GestionFenetre *gf);
 #endif

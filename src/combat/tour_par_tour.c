@@ -1,4 +1,5 @@
-#include "../include/tour_par_tour.h"
+#include "../../include/tour_par_tour.h"
+#include <stdbool.h>
 
 void nouveau_tour(TourJoueur* tour){
     tour->tour_joueur = true;
@@ -24,12 +25,12 @@ void tour_suivant(TourJoueur *tour){
     tour_commencer_joueur(tour);
 }
 
-bool tour_est_au_joueur(TourJoueur *tour){
-    return tour->tour_du_joueur;
+bool tour_est_au_joueur(const TourJoueur *tour){
+    return tour->tour_joueur;
 }
 
 bool tour_attente_action(const TourJoueur *tour) {
-    return tour->tour_du_joueur && !tour->action_effectuee;
+    return tour->tour_joueur && !tour->action_effectuee;
 }
 
 int tour_numero(const TourJoueur *tour) {

@@ -4,4 +4,3 @@
 #include "../../include/creatures.h"
 #include "../../include/combat.h"
 #include "../../include/systeme_fenetre.h"
-

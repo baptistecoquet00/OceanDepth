@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "../../include/creatures.h"
 #include "../../include/combat.h"
-#include "../include/tour_par_tour.h"
+#include "../../include/tour_par_tour.h"
 
 
 Combat_plongeur* nouveau_combat_plongeur(Plongeur* plongeur){
@@ -114,34 +114,34 @@ void combat_plongeur_gestion_oxygene(Combat_plongeur* plongeur_combat){
     //return plongeur_combat;
 }
 
-void Systeme_combat(Combat_plongeur *plongeur_combat){
-    TourJoueur tour;
-    tour_init(&tour);
+// void Systeme_combat(Combat_plongeur *plongeur_combat){
+//     TourJoueur tour;
+//     tour_init(&tour);
 
-    while (/* combat actif */) {
+//     while (/* combat actif */) {
         
-        if (tour_est_au_joueur(&tour)) {
-            // Afficher interface "En attente de votre action..."
+//         if (tour_est_au_joueur(&tour)) {
+//             // Afficher interface "En attente de votre action..."
             
-            if (tour_attente_action(&tour)) {
-                // Le joueur n'a pas encore agi
-                // Afficher les boutons/bindings d'action
-                printf("Choisissez une action...\n");
+//             if (tour_attente_action(&tour)) {
+//                 // Le joueur n'a pas encore agi
+//                 // Afficher les boutons/bindings d'action
+//                 printf("Choisissez une action...\n");
                 
-            } else {
-                // Le joueur a agi, on passe à l'ennemi
-                tour_passer_ennemi(&tour);
-            }
+//             } else {
+//                 // Le joueur a agi, on passe à l'ennemi
+//                 tour_passer_ennemi(&tour);
+//             }
             
-        } else {
-            // Tour de l'ennemi
-            executer_ia_ennemi();
+//         } else {
+//             // Tour de l'ennemi
+//             executer_ia_ennemi();
             
-            // Après l'ennemi, on passe au tour suivant
-            tour_suivant(&tour);
-        }
-    }
-}
+//             // Après l'ennemi, on passe au tour suivant
+//             tour_suivant(&tour);
+//         }
+//     }
+// }
 
 void free_combat_plongeur(Combat_plongeur* plongeur_combat){
     if (plongeur_combat != NULL) {        
