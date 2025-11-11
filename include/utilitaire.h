@@ -1,6 +1,8 @@
 #ifndef OK_H
 #define OK_H
 
+#include <stdio.h>
+
 void ok(){
     printf("\e[1;32mOK\e[0m\n");
 }

@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include "../../include/utilitaires_systeme.h" 
+#define ARENE_IMPLEMENTATION
 #include "../../include/gm.h"
 #include "../../include/systeme_fenetre.h"
 
@@ -55,6 +56,7 @@ void gf_rendu(GestionFenetre *gf){
             }
         }
     }
+    printf("\n");
     fflush(stdout);
 }
 
@@ -180,6 +182,7 @@ void gf_rendu_debug(GestionFenetre *gf){
             printf("  ← ligne %d", y);
         }
     }
+    
     fflush(stdout);
 }
 

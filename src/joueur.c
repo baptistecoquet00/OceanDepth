@@ -37,7 +37,7 @@ int est_mort(Plongeur* plongeur){
     return -1;
 }
 void affiche_est_mort(){
-    printf("\e[1;31mVOUS ETES MORT\e[0m\n");
+    printf("\n\e[1;31mVOUS ETES MORT\e[0m\n");
 }
 
 int vie_maximum(Plongeur* plongeur){
@@ -57,7 +57,7 @@ int oxygene_vide(Plongeur* plongeur){
 
 void oxygene_critique(Plongeur* plongeur){
     if(plongeur->niveau_oxygene < OXYGENE_CRITIQUE){
-        printf("\e[1;31m!!!ALERTE ROUGE!!!\e[0m\n");
+        printf("\n\e[1;31m!!!ALERTE ROUGE!!!\e[0m\n");
         return;
     }
     return;
