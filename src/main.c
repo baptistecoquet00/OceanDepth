@@ -48,14 +48,34 @@ int main() {
     Combat_plongeur *nv_plongeur_combat = nouveau_combat_plongeur(nv_plongeur);
 
     // Création de l'ennemi
-    CreatureMarine *ennemi = creer_requin_tigre();
+    //CreatureMarine *ennemi = creer_requin_tigre();
+    CreatureMarine creatures[MAX_CREATURES];
+    int nb_creatures;
+    int profondeur = 150;  // Exemple: 150m de profondeur
     
-    printf("=== LANCEMENT DU COMBAT ===\n");
-    printf("Joueur: %d PV, %d O2\n", 
-           nv_plongeur_combat->gestion_fatigue_vie->points_de_vie,
-           nv_plongeur_combat->gestion_fatigue_vie->niveau_oxygene);
-    printf("Ennemi: %s (%d PV)\n", ennemi->nom, ennemi->points_de_vie_actuels);
+    init_creatures_random(creatures, &nb_creatures, profondeur);
     
+    printf("=== RENCONTRE ALÉATOIRE À %dm ===\n", profondeur);
+    printf("%d créature(s) générée(s):\n", nb_creatures);
+    for (int i = 0; i < nb_creatures; i++) {
+        printf("- %s (%d PV, Attaque: %d-%d, Defense: %d)\n",
+               creatures[i].nom, 
+               creatures[i].points_de_vie_actuels,
+               creatures[i].attaque_minimale,
+               creatures[i].attaque_maximale,
+               creatures[i].defense);
+    }
+
+    // printf("=== LANCEMENT DU COMBAT ===\n");
+    // printf("Joueur: %d PV, %d O2\n", 
+    //        nv_plongeur_combat->gestion_fatigue_vie->points_de_vie,
+    //        nv_plongeur_combat->gestion_fatigue_vie->niveau_oxygene);
+    // printf("Ennemi: %s (%d PV)\n", ennemi->nom, ennemi->points_de_vie_actuels);
+    
+    CreatureMarine *ennemi = &creatures[0];
+    
+    printf("\n=== COMBAT CONTRE %s ===\n", ennemi->nom);
+
     // Création et exécution du système de combat
     SystemeCombat *combat = creer_systeme_combat(&gf, nv_plongeur_combat, ennemi);
     executer_combat(combat);
@@ -64,7 +84,7 @@ int main() {
     printf("Combat terminé. Nettoyage...\n");
     
     // Libération mémoire
-    free(ennemi);
+    //free(ennemi);
     free_combat_plongeur(nv_plongeur_combat);
     free_plongeur(nv_plongeur);
 
