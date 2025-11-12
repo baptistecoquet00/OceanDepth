@@ -8,5 +8,6 @@
 ## Captures d'écran
 [Insérer vos captures montrant le jeu en action,
 pour éviter un malheureux "effet démo" le jour de la soutenance]
+![alt text](image.png)
 ## Difficultés rencontrées
 [Décrire les problèmes et solutions]

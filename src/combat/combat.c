@@ -37,24 +37,31 @@ int combat_calcul_degats(int attaque_joueur, int bonus_arme){
     return degats;
 }
 
-void combat_plongeur_calcul_fatigue(Combat_plongeur* plongeur_combat){
+void combat_plongeur_calcul_fatigue(Combat_plongeur* plongeur_combat, int nombre_attaques_ce_tour) {
+    // Ajouter le nombre d'attaques de ce tour au compteur
+    plongeur_combat->compteur_attaques += nombre_attaques_ce_tour;
+    
+    // Toutes les 3 attaques cumulées, ajouter 1 point de fatigue
+    while (plongeur_combat->compteur_attaques >= 3) {
+        if (plongeur_combat->gestion_fatigue_vie->niveau_fatigue < FATIGUE_NV_CINQ) {
+            plongeur_combat->gestion_fatigue_vie->niveau_fatigue++;
+            printf(">>> Fatigue +1 (%d attaques cumulees)\n", plongeur_combat->compteur_attaques);
+        }
+        plongeur_combat->compteur_attaques -= 3; // On retire 3 du compteur
+    }
+    
+    // Calcul du nombre d'attaques par tour basé sur la fatigue actuelle
     int calcul_fatigue = plongeur_combat->gestion_fatigue_vie->niveau_fatigue; 
     
-    if(calcul_fatigue >= FATIGUE_NV_ZERO && calcul_fatigue <= FATIGUE_NV_UN)
-    {
+    if(calcul_fatigue >= FATIGUE_NV_ZERO && calcul_fatigue <= FATIGUE_NV_UN) {
         plongeur_combat->nb_attaque_par_tour = NB_MAXIMUM_ATTAQUE_PAR_TOUR;
     }
-    else if(calcul_fatigue >= FATIGUE_NV_DEUX && calcul_fatigue <= FATIGUE_NV_TROIS)
-    {
+    else if(calcul_fatigue >= FATIGUE_NV_DEUX && calcul_fatigue <= FATIGUE_NV_TROIS) {
         plongeur_combat->nb_attaque_par_tour = NB_MOYEN_ATTAQUE_PAR_TOUR;
     }
-    else if(calcul_fatigue >= FATIGUE_NV_QUATRE && calcul_fatigue <=FATIGUE_NV_CINQ)
-    {
+    else if(calcul_fatigue >= FATIGUE_NV_QUATRE && calcul_fatigue <= FATIGUE_NV_CINQ) {
         plongeur_combat->nb_attaque_par_tour = NB_BAS_ATTAQUE_PAR_TOUR;
     }
-
-    return;
-    //return plongeur_combat;
 }
 
 void combat_plongeur_gestion_vie(Combat_plongeur* plongeur_combat, CreatureMarine* creature){
@@ -90,11 +97,11 @@ inline int competence_speciale(Combat_plongeur* plongeur_combat){
 void combat_plongeur_gestion_oxygene(Combat_plongeur* plongeur_combat){
 
     if(plongeur_combat->attaque_normale){
-        plongeur_combat->gestion_fatigue_vie->niveau_oxygene -= 1;
+        plongeur_combat->gestion_fatigue_vie->niveau_oxygene -= 2;
     }
 
     if(plongeur_combat->competence_special){
-        plongeur_combat->gestion_fatigue_vie->niveau_oxygene -= 2;
+        plongeur_combat->gestion_fatigue_vie->niveau_oxygene -= 5;
     }
     
     plongeur_combat->gestion_fatigue_vie->niveau_oxygene = oxygene_vide(plongeur_combat->gestion_fatigue_vie);

@@ -21,37 +21,90 @@ SystemeCombat* creer_systeme_combat(GestionFenetre *gf, Combat_plongeur *plongeu
     return systeme;
 }
 
-void executer_tour_joueur(SystemeCombat *systeme, int action) {
-    switch(action) {
-        case 1: // Attaque normale
-            systeme->plongeur->attaque_normale = true;
-            int degats = 8 + rand() % 5;
-            systeme->ennemi->points_de_vie_actuels -= degats;
-            afficher_message_combat(systeme->interface, "Attaque normale! -%d PV", degats);
+void executer_tour_joueur(SystemeCombat *systeme) {
+    int nombre_attaques_ce_tour = 0;
+    int attaques_effectuees = 0;
+    int attaques_max = systeme->plongeur->nb_attaque_par_tour;
+    
+    // Boucle pour les choix multiples dans le même tour
+    while (attaques_effectuees < attaques_max && systeme->combat_actif) {
+        // Mise à jour de l'interface pour montrer les attaques restantes
+        mettre_a_jour_interface_combat(systeme->interface, systeme->plongeur, systeme->ennemi);
+        
+        afficher_fenetref(systeme->interface->actions_win, 2, 1, 
+                        "Action %d/%d - Choix:", 
+                        attaques_effectuees + 1, attaques_max);
+        afficher_actions_disponibles(systeme->interface);
+        
+        gf_rendu(systeme->gf);
+        
+        printf("Action %d/%d: ", attaques_effectuees + 1, attaques_max);
+        int action = getchar() - '0';
+        getchar();
+        
+        if (action == 0) {
+            // Option pour terminer le tour plus tôt
             break;
-            
-        case 2: // Compétence
-            systeme->plongeur->competence_special = true;
-            int degats_speciaux = 15 + rand() % 10;
-            systeme->ennemi->points_de_vie_actuels -= degats_speciaux;
-            afficher_message_combat(systeme->interface, "Competence speciale! -%d PV", degats_speciaux);
-            break;
-            
-        case 3: // Défendre
-            afficher_message_combat(systeme->interface, "Vous vous defendez!");
-            break;
-            
-        case 4: // Objet
-            afficher_message_combat(systeme->interface, "Vous utilisez un objet!");
-            break;
-            
-        case 5: // Fuir
-            afficher_message_combat(systeme->interface, "Vous tentez de fuir...");
-            systeme->combat_actif = false;
-            break;
+        }
+        
+        bool est_attaque = false;
+        
+        switch(action) {
+            case 1: // Attaque normale
+                systeme->plongeur->attaque_normale = true;
+                int degats = 8 + rand() % 5;
+                systeme->ennemi->points_de_vie_actuels -= degats;
+                afficher_message_combat(systeme->interface, "Attaque %d: -%d PV", 
+                                       attaques_effectuees + 1, degats);
+                est_attaque = true;
+                break;
+                
+            case 2: // Compétence
+                systeme->plongeur->competence_special = true;
+                int degats_speciaux = 15 + rand() % 10;
+                systeme->ennemi->points_de_vie_actuels -= degats_speciaux;
+                afficher_message_combat(systeme->interface, "Competence %d: -%d PV", 
+                                       attaques_effectuees + 1, degats_speciaux);
+                est_attaque = true;
+                break;
+                
+            case 3: // Défendre (une seule fois par tour)
+                if (attaques_effectuees == 0) {
+                    afficher_message_combat(systeme->interface, "Vous vous defendez!");
+                    // Défense active pour tout le tour
+                }
+                break;
+                
+            case 4: // Objet (une seule fois par tour)
+                if (attaques_effectuees == 0) {
+                    afficher_message_combat(systeme->interface, "Vous utilisez un objet!");
+                }
+                break;
+                
+            case 5: // Fuir (termine le tour)
+                afficher_message_combat(systeme->interface, "Vous tentez de fuir...");
+                systeme->combat_actif = false;
+                attaques_effectuees = attaques_max; // Force la fin du tour
+                break;
+        }
+        
+        if (est_attaque) {
+            nombre_attaques_ce_tour++;
+            attaques_effectuees++;
+        } else {
+            // Pour défense/objet, on compte comme une action mais pas une attaque
+            attaques_effectuees++;
+        }
+        
+        // Rendu après chaque action pour voir l'effet
+        gf_rendu(systeme->gf);
+        sleep(1);
     }
     
-    // Gestion oxygène après action
+    //  MISE À JOUR FATIGUE APRÈS TOUTES LES ACTIONS DU TOUR 
+    combat_plongeur_calcul_fatigue(systeme->plongeur, nombre_attaques_ce_tour);
+    
+    // Gestion oxygène
     combat_plongeur_gestion_oxygene(systeme->plongeur);
     
     // Réinitialiser flags
@@ -92,15 +145,13 @@ void executer_combat(SystemeCombat *systeme) {
         
         if (tour_est_au_joueur(&systeme->tour)) {
             if (tour_attente_action(&systeme->tour)) {
-                afficher_actions_disponibles(systeme->interface);
-                printf("Tour %d - Joueur: ", tour_numero(&systeme->tour));
-                int action = getchar() - '0';
-                getchar();
+                // ⭐⭐ SUPPRIMER l'appel à afficher_actions_disponibles() ici
+                // ⭐⭐ SUPPRIMER le getchar() ici
                 
-                if (action >= 1 && action <= 5) {
-                    executer_tour_joueur(systeme, action);
-                    tour_action_effectuee(&systeme->tour);
-                }
+                // ⭐⭐ APPEL DIRECT SANS PARAMÈTRE ⭐⭐
+                executer_tour_joueur(systeme);  // ⬅️ Plus de paramètre 'action'
+                tour_action_effectuee(&systeme->tour);
+                
             } else {
                 tour_passer_creature(&systeme->tour);
             }

@@ -30,7 +30,7 @@ typedef struct {
 // Système
 SystemeCombat* creer_systeme_combat(GestionFenetre *gf, Combat_plongeur *plongeur, CreatureMarine *ennemi);
 void executer_combat(SystemeCombat *systeme);
-void executer_tour_joueur(SystemeCombat *systeme, int action);
+void executer_tour_joueur(SystemeCombat *systeme);
 void executer_tour_ennemi(SystemeCombat *systeme);
 bool verifier_fin_combat(SystemeCombat *systeme);
 void detruire_systeme_combat(SystemeCombat *systeme);

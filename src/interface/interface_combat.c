@@ -5,10 +5,10 @@
 
 InterfaceCombat* creer_interface_combat(GestionFenetre *gf) {
     InterfaceCombat *interface = malloc(sizeof(InterfaceCombat));
-    
+    interface->stats_win = gf_creer_fenetre(gf, 5, 3, 85, 6, "STATISTIQUES");
     interface->combat_win = gf_creer_fenetre(gf, 5, 10, 70, 12, "COMBAT SOUS-MARIN");
     interface->actions_win = gf_creer_fenetre(gf, 5, 24, 70, 6, "ACTIONS");
-    interface->stats_win = gf_creer_fenetre(gf, 5, 3, 85, 6, "STATISTIQUES");
+    
     
     // Bordures initiales
     fenetre_dessiner_bordure(interface->combat_win);
@@ -72,7 +72,7 @@ void afficher_message_combat(InterfaceCombat *interface, const char *format, ...
     
     // Garder les actions disponibles en dessous
     afficher_fenetre(interface->actions_win, 2, 2, "1. Attaque    2. Competence    3. Defendre");
-    afficher_fenetre(interface->actions_win, 2, 3, "4. Objet      5. Fuir");
+    afficher_fenetre(interface->actions_win, 2, 3, "4. Objet      5. Fuir          0. Terminer tour");
 }
 
 void detruire_interface_combat(InterfaceCombat *interface) {
