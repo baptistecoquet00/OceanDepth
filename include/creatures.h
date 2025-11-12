@@ -1,17 +1,15 @@
 #ifndef CREATURES_H
 #define CREATURES_H
 
-typedef enum {
-    KRAKEN,
-    REQUIN,
-    MEDUSE,
-    POISSON_EPEE,
-    SERPENT_DE_MER
-} TypeCreature;
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_CREATURES 8
 
 typedef struct {
-    int id; // identifiant unique pour cibler
-    char nom[30];
+    int id;
+    char nom[32];
     int points_de_vie_max;
     int points_de_vie_actuels;
     int attaque_minimale;
@@ -22,7 +20,6 @@ typedef struct {
     int est_vivant;
 } CreatureMarine;
 
-void generer_creatures(CreatureMarine *tableau, int *nb_creatures, int profondeur);
-void afficher_creature(const CreatureMarine *creature);
+void init_creatures_random(CreatureMarine arr[], int *nb, int profondeur);
 
 #endif

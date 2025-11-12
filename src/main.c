@@ -36,47 +36,6 @@ CreatureMarine* creer_requin_tigre() {
 
 
 int main() {
-    // CreatureMarine tab[5];
-    // int nb = 5;   
-
-    // generer_creatures(tab, &nb, 100); 
-    // Combat_plongeur* nv_plongeur_combat = nouveau_combat_plongeur(nv_plongeur);
-    // afficher_plongeur(nv_plongeur_combat->gestion_fatigue_vie);
-
-
-    // nv_plongeur_combat->gestion_fatigue_vie->niveau_fatigue = 5;
-    // separateur_sections();
-    // afficher_plongeur(nv_plongeur_combat->gestion_fatigue_vie);
-    
-    // separateur_sections();
-    // combat_plongeur_calcul_fatigue(nv_plongeur_combat);
-    // afficher_combat_plongeur(nv_plongeur_combat);
-
-    // int degats_calculees = combat_calcul_degats(nv_plongeur_combat->attaque_special,nv_plongeur_combat->competence_special);
-    // printf("Degats infligés : %d\n",degats_calculees);
-    // combat_plongeur_calcul_fatigue(nv_plongeur_combat);
-    // printf("Nombre d'attaque par tour : %d\n",nv_plongeur_combat->nb_attaque_par_tour);
-    
-    // separateur_sections();
-    // nv_plongeur_combat->gestion_fatigue_vie->niveau_oxygene = 0;
-    // combat_plongeur_gestion_oxygene(nv_plongeur_combat);
-    
-    // if(nv_plongeur_combat->gestion_fatigue_vie->niveau_oxygene <= OXYGENE_CRITIQUE){
-    //     oxygene_critique(nv_plongeur_combat->gestion_fatigue_vie);
-    // }
-
-    // if(nv_plongeur_combat->gestion_fatigue_vie->points_de_vie <= 0){
-    //     affiche_est_mort();
-    // }
-
-    // afficher_plongeur(nv_plongeur_combat->gestion_fatigue_vie);
-    
-    // separateur_sections();
-    // printf("Niveau d'oxygène : %d\n",nv_plongeur_combat->gestion_fatigue_vie->niveau_oxygene);
-
-    // free_combat_plongeur(nv_plongeur_combat);
-    // free_plongeur(nv_plongeur);
-
     // Initialisation
     srand(time(NULL));
     
@@ -89,14 +48,34 @@ int main() {
     Combat_plongeur *nv_plongeur_combat = nouveau_combat_plongeur(nv_plongeur);
 
     // Création de l'ennemi
-    CreatureMarine *ennemi = creer_requin_tigre();
+    //CreatureMarine *ennemi = creer_requin_tigre();
+    CreatureMarine creatures[MAX_CREATURES];
+    int nb_creatures;
+    int profondeur = 150;  // Exemple: 150m de profondeur
     
-    printf("=== LANCEMENT DU COMBAT ===\n");
-    printf("Joueur: %d PV, %d O2\n", 
-           nv_plongeur_combat->gestion_fatigue_vie->points_de_vie,
-           nv_plongeur_combat->gestion_fatigue_vie->niveau_oxygene);
-    printf("Ennemi: %s (%d PV)\n", ennemi->nom, ennemi->points_de_vie_actuels);
+    init_creatures_random(creatures, &nb_creatures, profondeur);
     
+    printf("=== RENCONTRE ALÉATOIRE À %dm ===\n", profondeur);
+    printf("%d créature(s) générée(s):\n", nb_creatures);
+    for (int i = 0; i < nb_creatures; i++) {
+        printf("- %s (%d PV, Attaque: %d-%d, Defense: %d)\n",
+               creatures[i].nom, 
+               creatures[i].points_de_vie_actuels,
+               creatures[i].attaque_minimale,
+               creatures[i].attaque_maximale,
+               creatures[i].defense);
+    }
+
+    // printf("=== LANCEMENT DU COMBAT ===\n");
+    // printf("Joueur: %d PV, %d O2\n", 
+    //        nv_plongeur_combat->gestion_fatigue_vie->points_de_vie,
+    //        nv_plongeur_combat->gestion_fatigue_vie->niveau_oxygene);
+    // printf("Ennemi: %s (%d PV)\n", ennemi->nom, ennemi->points_de_vie_actuels);
+    
+    CreatureMarine *ennemi = &creatures[0];
+    
+    printf("\n=== COMBAT CONTRE %s ===\n", ennemi->nom);
+
     // Création et exécution du système de combat
     SystemeCombat *combat = creer_systeme_combat(&gf, nv_plongeur_combat, ennemi);
     executer_combat(combat);
@@ -105,7 +84,7 @@ int main() {
     printf("Combat terminé. Nettoyage...\n");
     
     // Libération mémoire
-    free(ennemi);
+    //free(ennemi);
     free_combat_plongeur(nv_plongeur_combat);
     free_plongeur(nv_plongeur);
 

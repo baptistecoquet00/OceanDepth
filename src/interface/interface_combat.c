@@ -50,7 +50,7 @@ void afficher_actions_disponibles(InterfaceCombat *interface) {
     
     afficher_fenetre(interface->actions_win, 2, 1, "CHOISISSEZ UNE ACTION:");
     afficher_fenetre(interface->actions_win, 2, 2, "1. Attaque    2. Competence    3. Defendre");
-    afficher_fenetre(interface->actions_win, 2, 3, "4. Objet      5. Fuir");
+    afficher_fenetre(interface->actions_win, 2, 3, "4. Objet      5. Fuir          0. Terminer tour");
 }
 
 void afficher_message_combat(InterfaceCombat *interface, const char *format, ...) {

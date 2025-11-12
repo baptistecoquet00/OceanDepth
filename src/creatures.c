@@ -1,94 +1,93 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
 #include "../include/creatures.h"
 
-void generer_creatures(CreatureMarine *tableau, int *nb_creatures, int profondeur)
-{
-    if (!tableau || !nb_creatures)
-        return;
-    srand((unsigned)time(NULL)); // permet d'avoir les creatures aléatoirment
+/* On se base sur la profondeur pour ajuster nb et force */
 
-    for (int i = 0; i < *nb_creatures; i++)
-    {
-        CreatureMarine *creature = &tableau[i];
-        creature->id = i + 1;
+static void init_kraken(CreatureMarine *c, int id) {
+    c->id = id;
+    strcpy(c->nom, "Kraken");
+    c->points_de_vie_max = 140;
+    c->points_de_vie_actuels = 120;
+    c->attaque_minimale = 25;
+    c->attaque_maximale = 35;
+    c->defense = 10;
+    c->vitesse = 4;
+    strcpy(c->effet_special, "etreeinte");
+    c->est_vivant = 1;
+}
 
-        switch (i)
-        {
-        case KRAKEN:
-            strcpy(creature->nom, "Kraken");
-            creature->points_de_vie_max = 120;
-            creature->points_de_vie_actuels = 120;
-            creature->attaque_minimale = 25;
-            creature->attaque_maximale = 40;
-            creature->defense = 12;
-            creature->vitesse = 4;
-            strcpy(creature->effet_special, "rapide");
-            creature->est_vivant = 1;
-            break;
+static void init_requin(CreatureMarine *c, int id) {
+    c->id = id;
+    strcpy(c->nom, "Requin");
+    c->points_de_vie_max = 80;
+    c->points_de_vie_actuels = 80;
+    c->attaque_minimale = 15;
+    c->attaque_maximale = 25;
+    c->defense = 5;
+    c->vitesse = 7;
+    strcpy(c->effet_special, "frenesie");
+    c->est_vivant = 1;
+}
 
-        case REQUIN:
-            strcpy(creature->nom, "Requin");
-            creature->points_de_vie_max = 100;
-            creature->points_de_vie_actuels = 100;
-            creature->attaque_minimale = 15;
-            creature->attaque_maximale = 25;
-            creature->defense = 8;
-            creature->vitesse = 20;
-            strcpy(creature->effet_special, "attaques multiples");
-            creature->est_vivant = 1;
-            break;
+static void init_meduse(CreatureMarine *c, int id) {
+    c->id = id;
+    strcpy(c->nom, "Méduse");
+    c->points_de_vie_max = 30;
+    c->points_de_vie_actuels = 30;
+    c->attaque_minimale = 8;
+    c->attaque_maximale = 15;
+    c->defense = 2;
+    c->vitesse = 9;
+    strcpy(c->effet_special, "paralysie");
+    c->est_vivant = 1;
+}
 
-        case MEDUSE:
-            strcpy(creature->nom, "Méduse");
-            creature->points_de_vie_max = 35;
-            creature->points_de_vie_actuels = 35;
-            creature->attaque_minimale = 3;
-            creature->attaque_maximale = 8;              
-            creature->defense = 2;                        
-            creature->vitesse = 5;                       
-            strcpy(creature->effet_special, "paralysie"); // ses filaments paralysent
-            creature->est_vivant = 1;
-            break;
+static void init_poisson_ep(CreatureMarine *c, int id) {
+    c->id = id;
+    strcpy(c->nom, "Poisson-Épée");
+    c->points_de_vie_max = 80;
+    c->points_de_vie_actuels = 80;
+    c->attaque_minimale = 18;
+    c->attaque_maximale = 28;
+    c->defense = 4;
+    c->vitesse = 6;
+    strcpy(c->effet_special, "perforant");
+    c->est_vivant = 1;
+}
 
-        case POISSON_EPEE:
-            strcpy(creature->nom, "Poisson Épée");
-            creature->points_de_vie_max = 50;
-            creature->points_de_vie_actuels = 50;
-            creature->attaque_minimale = 6;
-            creature->attaque_maximale = 12;          
-            creature->defense = 4;                   
-            creature->vitesse = 9;                    
-            strcpy(creature->effet_special, "aucun"); // pas de pouvoir magique
-            creature->est_vivant = 1;
-            break;
+static void init_crabe(CreatureMarine *c, int id) {
+    c->id = id;
+    strcpy(c->nom, "Crabe Géant");
+    c->points_de_vie_max = 100;
+    c->points_de_vie_actuels = 100;
+    c->attaque_minimale = 12;
+    c->attaque_maximale = 20;
+    c->defense = 12;
+    c->vitesse = 3;
+    strcpy(c->effet_special, "carapace");
+    c->est_vivant = 1;
+}
 
-        case SERPENT_DE_MER:
-            strcpy(creature->nom, "Serpent de mer");
-            creature->points_de_vie_max = 70;
-            creature->points_de_vie_actuels = 70;
-            creature->attaque_minimale = 10;
-            creature->attaque_maximale = 18;
-            creature->defense = 6;
-            creature->vitesse = 8;
-            strcpy(creature->effet_special, "poison"); // morsure empoisonnée
-            creature->est_vivant = 1;
-            break;
-
-        default:
-            strcpy(creature->nom, "Créature inconnue");
-            creature->points_de_vie_max = 10;
-            creature->points_de_vie_actuels = 10;
-            creature->attaque_minimale = 1;
-            creature->attaque_maximale = 2;
-            creature->defense = 1;
-            creature->vitesse = 1;
-            strcpy(creature->effet_special, "aucun");
-            creature->est_vivant = 1;
-
-            break;
+void init_creatures_random(CreatureMarine arr[], int *nb, int profondeur) {
+    // profondeur influe sur le nombre (1..4 par spec)
+    int max = 1 + (profondeur / 200); // simple : 0-199 =>1, 200-399 =>2...
+    if (max < 1) max = 1;
+    if (max > 4) max = 4;
+    int count = 1 + rand() % max; // 1..max
+    *nb = count;
+    for (int i = 0; i < count; i++) {
+        int r = rand() % 5;
+        switch (r) {
+            case 0: init_kraken(&arr[i], i+1); break;
+            case 1: init_requin(&arr[i], i+1); break;
+            case 2: init_meduse(&arr[i], i+1); break;
+            case 3: init_poisson_ep(&arr[i], i+1); break;
+            default: init_crabe(&arr[i], i+1); break;
         }
+        // ajustement selon profondeur
+        int bonus = profondeur / 100; // +1 par 100m
+        arr[i].points_de_vie_max += bonus * 5;
+        arr[i].points_de_vie_actuels = arr[i].points_de_vie_max;
+        arr[i].attaque_minimale += bonus;
+        arr[i].attaque_maximale += bonus;
     }
 }
