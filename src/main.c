@@ -36,47 +36,6 @@ CreatureMarine* creer_requin_tigre() {
 
 
 int main() {
-    // CreatureMarine tab[5];
-    // int nb = 5;   
-
-    // generer_creatures(tab, &nb, 100); 
-    // Combat_plongeur* nv_plongeur_combat = nouveau_combat_plongeur(nv_plongeur);
-    // afficher_plongeur(nv_plongeur_combat->gestion_fatigue_vie);
-
-
-    // nv_plongeur_combat->gestion_fatigue_vie->niveau_fatigue = 5;
-    // separateur_sections();
-    // afficher_plongeur(nv_plongeur_combat->gestion_fatigue_vie);
-    
-    // separateur_sections();
-    // combat_plongeur_calcul_fatigue(nv_plongeur_combat);
-    // afficher_combat_plongeur(nv_plongeur_combat);
-
-    // int degats_calculees = combat_calcul_degats(nv_plongeur_combat->attaque_special,nv_plongeur_combat->competence_special);
-    // printf("Degats infligés : %d\n",degats_calculees);
-    // combat_plongeur_calcul_fatigue(nv_plongeur_combat);
-    // printf("Nombre d'attaque par tour : %d\n",nv_plongeur_combat->nb_attaque_par_tour);
-    
-    // separateur_sections();
-    // nv_plongeur_combat->gestion_fatigue_vie->niveau_oxygene = 0;
-    // combat_plongeur_gestion_oxygene(nv_plongeur_combat);
-    
-    // if(nv_plongeur_combat->gestion_fatigue_vie->niveau_oxygene <= OXYGENE_CRITIQUE){
-    //     oxygene_critique(nv_plongeur_combat->gestion_fatigue_vie);
-    // }
-
-    // if(nv_plongeur_combat->gestion_fatigue_vie->points_de_vie <= 0){
-    //     affiche_est_mort();
-    // }
-
-    // afficher_plongeur(nv_plongeur_combat->gestion_fatigue_vie);
-    
-    // separateur_sections();
-    // printf("Niveau d'oxygène : %d\n",nv_plongeur_combat->gestion_fatigue_vie->niveau_oxygene);
-
-    // free_combat_plongeur(nv_plongeur_combat);
-    // free_plongeur(nv_plongeur);
-
     // Initialisation
     srand(time(NULL));
     
