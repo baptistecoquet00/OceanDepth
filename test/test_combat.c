@@ -38,16 +38,16 @@ void test_combat_calcul_fatigue(){
 
     printf("Test pour le calcul de fatigue... ");
     
-    combat_calcul_fatigue(nv_plongeur_combat);
+    combat_plongeur_calcul_fatigue(nv_plongeur_combat);
     assert(nv_plongeur_combat->nb_attaque_par_tour==3);
 
     
     nv_plongeur_combat->gestion_fatigue_vie->niveau_fatigue = 2;
-    combat_calcul_fatigue(nv_plongeur_combat);
+    combat_plongeur_calcul_fatigue(nv_plongeur_combat);
     assert(nv_plongeur_combat->nb_attaque_par_tour==2);
     
     nv_plongeur_combat->gestion_fatigue_vie->niveau_fatigue = 5;
-    combat_calcul_fatigue(nv_plongeur_combat);
+    combat_plongeur_calcul_fatigue(nv_plongeur_combat);
     assert(nv_plongeur_combat->nb_attaque_par_tour==1);
 
     ok();
@@ -67,7 +67,7 @@ void test_combat_calcul_oxygene(){
     
     nv_plongeur_combat->gestion_fatigue_vie->niveau_oxygene = ZERO_OXYGENE;
     
-    combat_gestion_oxygene(nv_plongeur_combat);
+    combat_plongeur_gestion_oxygene(nv_plongeur_combat);
     
     printf("Test pour le calcul d'oxygene... ");
     assert(nv_plongeur_combat->gestion_fatigue_vie->points_de_vie==0);
@@ -90,7 +90,7 @@ void test_combat_calcul_vie(){
     CreatureMarine* creature = (CreatureMarine*)malloc(sizeof(CreatureMarine));
     creature->attaque_maximale = 10;
     creature->attaque_minimale = 5;
-    combat_gestion_vie(nv_plongeur_combat,creature);
+    combat_plongeur_gestion_vie(nv_plongeur_combat,creature);
     printf("Test pour le calcul de vie... ");
     assert(nv_plongeur_combat->gestion_fatigue_vie->points_de_vie==nv_plongeur_combat->gestion_fatigue_vie->points_de_vie_max-15);
     ok();

@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "../../include/gm.h"
 #include "../../include/creatures.h"
+#include "../../include/tour_par_tour.h"
 #include "../../include/combat.h"
-#include "../include/tour_par_tour.h"
 
 
 Combat_plongeur* nouveau_combat_plongeur(Plongeur* plongeur){
@@ -35,24 +37,31 @@ int combat_calcul_degats(int attaque_joueur, int bonus_arme){
     return degats;
 }
 
-void combat_plongeur_calcul_fatigue(Combat_plongeur* plongeur_combat){
+void combat_plongeur_calcul_fatigue(Combat_plongeur* plongeur_combat, int nombre_attaques_ce_tour) {
+    // Ajouter le nombre d'attaques de ce tour au compteur
+    plongeur_combat->compteur_attaques += nombre_attaques_ce_tour;
+    
+    // Toutes les 3 attaques cumulées, ajouter 1 point de fatigue
+    while (plongeur_combat->compteur_attaques >= 3) {
+        if (plongeur_combat->gestion_fatigue_vie->niveau_fatigue < FATIGUE_NV_CINQ) {
+            plongeur_combat->gestion_fatigue_vie->niveau_fatigue++;
+            printf(">>> Fatigue +1 (%d attaques cumulees)\n", plongeur_combat->compteur_attaques);
+        }
+        plongeur_combat->compteur_attaques -= 3; // On retire 3 du compteur
+    }
+    
+    // Calcul du nombre d'attaques par tour basé sur la fatigue actuelle
     int calcul_fatigue = plongeur_combat->gestion_fatigue_vie->niveau_fatigue; 
     
-    if(calcul_fatigue >= FATIGUE_NV_ZERO && calcul_fatigue <= FATIGUE_NV_UN)
-    {
+    if(calcul_fatigue >= FATIGUE_NV_ZERO && calcul_fatigue <= FATIGUE_NV_UN) {
         plongeur_combat->nb_attaque_par_tour = NB_MAXIMUM_ATTAQUE_PAR_TOUR;
     }
-    else if(calcul_fatigue >= FATIGUE_NV_DEUX && calcul_fatigue <= FATIGUE_NV_TROIS)
-    {
+    else if(calcul_fatigue >= FATIGUE_NV_DEUX && calcul_fatigue <= FATIGUE_NV_TROIS) {
         plongeur_combat->nb_attaque_par_tour = NB_MOYEN_ATTAQUE_PAR_TOUR;
     }
-    else if(calcul_fatigue >= FATIGUE_NV_QUATRE && calcul_fatigue <=FATIGUE_NV_CINQ)
-    {
+    else if(calcul_fatigue >= FATIGUE_NV_QUATRE && calcul_fatigue <= FATIGUE_NV_CINQ) {
         plongeur_combat->nb_attaque_par_tour = NB_BAS_ATTAQUE_PAR_TOUR;
     }
-
-    return;
-    //return plongeur_combat;
 }
 
 void combat_plongeur_gestion_vie(Combat_plongeur* plongeur_combat, CreatureMarine* creature){
@@ -88,23 +97,23 @@ inline int competence_speciale(Combat_plongeur* plongeur_combat){
 void combat_plongeur_gestion_oxygene(Combat_plongeur* plongeur_combat){
 
     if(plongeur_combat->attaque_normale){
-        plongeur_combat->gestion_fatigue_vie->niveau_oxygene += attaque_normal(plongeur_combat);
+        plongeur_combat->gestion_fatigue_vie->niveau_oxygene -= 2;
     }
 
     if(plongeur_combat->competence_special){
-        plongeur_combat->gestion_fatigue_vie->niveau_oxygene += competence_speciale(plongeur_combat);
+        plongeur_combat->gestion_fatigue_vie->niveau_oxygene -= 5;
     }
     
     plongeur_combat->gestion_fatigue_vie->niveau_oxygene = oxygene_vide(plongeur_combat->gestion_fatigue_vie);
     //oxygene_critique(plongeur_combat.gestion_fatigue_vie);
 
-    while (plongeur_combat->gestion_fatigue_vie->niveau_oxygene <= 0)
+    if(plongeur_combat->gestion_fatigue_vie->niveau_oxygene <= 0)
     {
         plongeur_combat->gestion_fatigue_vie->points_de_vie -=5;
         //printf("Point de vie avant la mort : %d\n",plongeur_combat.gestion_fatigue_vie.points_de_vie);
         
         if(est_mort(plongeur_combat->gestion_fatigue_vie)==0){
-            break;
+           return;
         }
     }
     return;
@@ -114,32 +123,27 @@ void combat_plongeur_gestion_oxygene(Combat_plongeur* plongeur_combat){
     //return plongeur_combat;
 }
 
-void Systeme_combat(Combat_plongeur *plongeur_combat){
-    TourJoueur tour;
-    tour_init(&tour);
+// Calculer les dégâts d'une créature (aléatoire entre min et max)
+int calculer_degats_creature(CreatureMarine *creature) {
+    return creature->attaque_minimale + 
+           rand() % (creature->attaque_maximale - creature->attaque_minimale + 1);
+}
 
-    while (/* combat actif */) {
-        
-        if (tour_est_au_joueur(&tour)) {
-            // Afficher interface "En attente de votre action..."
-            
-            if (tour_attente_action(&tour)) {
-                // Le joueur n'a pas encore agi
-                // Afficher les boutons/bindings d'action
-                printf("Choisissez une action...\n");
-                
-            } else {
-                // Le joueur a agi, on passe à l'ennemi
-                tour_passer_ennemi(&tour);
-            }
-            
-        } else {
-            // Tour de l'ennemi
-            executer_ia_ennemi();
-            
-            // Après l'ennemi, on passe au tour suivant
-            tour_suivant(&tour);
-        }
+// Appliquer les effets spéciaux
+void appliquer_effet_special(CreatureMarine *creature, Combat_plongeur *plongeur,Fenetre *combat_win) {
+    if (strcmp(creature->effet_special, "poison") == 0) {
+        // Logique poison
+        plongeur->gestion_fatigue_vie->points_de_vie -= 3;
+        afficher_fenetre(combat_win, 2, 12, "Vous etes empoisonne! -3 PV");
+    }
+    else if (strcmp(creature->effet_special, "paralysie") == 0) {
+        // Logique paralysie (prochain tour sauté)
+        afficher_fenetre(combat_win, 2, 12, "Vous etes paralyse!");
+    }
+    else if (strcmp(creature->effet_special, "saignement") == 0) {
+        // Logique saignement
+        plongeur->gestion_fatigue_vie->points_de_vie -= 2;
+        afficher_fenetre(combat_win, 2, 12, "Vous saignez! -2 PV");
     }
 }
 
