@@ -7,6 +7,7 @@
 #include "../../include/combat.h"
 
 
+
 Combat_plongeur* nouveau_combat_plongeur(Plongeur* plongeur){
     Combat_plongeur* plongeur_combat = (Combat_plongeur*)malloc(sizeof(Combat_plongeur));
     plongeur_combat->nb_attaque_par_tour = NB_MAXIMUM_ATTAQUE_PAR_TOUR;
