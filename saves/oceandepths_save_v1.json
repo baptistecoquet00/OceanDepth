@@ -21,20 +21,33 @@
             "state_creature": [ 
                 {
                     "nom_creature": "kraken",
-                    "pv_kraken": 124,
-                    "pv_max_kraken": 156
+                    "pv_creature": 124,
+                    "pv_max_creature": 156,
+                    "attaque_minimale": 25,
+                    "attaque_maximale": 35,
+                    "defense": 10,
+                    "vitesse": 4,
+                    "effet_special": "etreinte"
                 },
-            
                 {
                     "nom_creature": "requin",
-                    "pv_kraken": 89,
-                    "pv_max_kraken": 89
+                    "pv_creature": 89,
+                    "pv_max_creature": 89,
+                    "attaque_minimale": 15,
+                    "attaque_maximale": 25,
+                    "defense": 5,
+                    "vitesse": 7,
+                    "effet_special": "frenesie"
                 },
-                
                 {
                     "nom_creature": "meduse",
-                    "pv_kraken": 23,
-                    "pv_max_kraken": 34
+                    "pv_creature": 23,
+                    "pv_max_creature": 34,
+                    "attaque_minimale": 8,
+                    "attaque_maximale": 15,
+                    "defense": 2,
+                    "vitesse": 9,
+                    "effet_special": "paralysie"
                 } 
             ]
         }
