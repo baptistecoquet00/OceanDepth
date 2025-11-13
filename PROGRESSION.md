@@ -4,6 +4,7 @@
 - [x] Étape 2 : Attaque joueur
 - [x] Étape 3 : Attaque créatures
 - [ ] Étape 4 : Récompenses
+- [x] Étape 5 : Sauvegarde Chargement
 ...
 ## Captures d'écran
 [Insérer vos captures montrant le jeu en action,

@@ -2,7 +2,7 @@
 #include "../include/utilitaire.h"
 #include "../include/interface_combat.h"
 #include "../include/systeme_combat.h"
-#include "../include/sauvegarde.h"
+#include "../include/charger.h"
 
 // main.c
 #include <stdio.h>
@@ -111,11 +111,62 @@ void debug_creature(const char* nom, CreatureMarine *c) {
     printf("  Taille structure: %zu bytes\n", sizeof(*c));
 }
 
+
+void recommencer_jeu() {
+    printf("🎮 Nouvelle partie!\n");
+    
+    // Les fonctions d'initialisation s'occupent déjà des valeurs par défaut
+    Plongeur *nv_plongeur = nouveau_plongeur();
+    Combat_plongeur *nv_plongeur_combat = nouveau_combat_plongeur(nv_plongeur);
+    
+    printf("✅ Plongeur créé avec les stats par défaut\n");
+    
+    // Utilisation de tes fonctions existantes
+    afficher_plongeur(nv_plongeur);
+    afficher_combat_plongeur(nv_plongeur_combat);
+    
+    // Ici tu peux appeler ta boucle principale de jeu
+    // executer_jeu_principal(nv_plongeur_combat);
+}
+
+void game_over(Plongeur* plongeur, CreatureMarine* creatures, int nb_creatures) {
+    printf("💀 Game Over! Sauvegarde de la partie...\n");
+    
+    // Sauvegarder l'état actuel (avec 0 PV)
+    if (sauvegarder_jeu_complet("savegame_gameover.json", plongeur, creatures, nb_creatures) == 0) {
+        printf("✅ État de game over sauvegardé\n");
+    }
+    
+    // Option: proposer de recommencer
+    printf("Voulez-vous recommencer? (o/n): ");
+    char choix = getchar();
+    if (choix == 'o' || choix == 'O') {
+        // Recréer une nouvelle partie
+        recommencer_jeu();
+    }
+}
+
+void quitter_jeu(Plongeur* plongeur, CreatureMarine* creatures, int nb_creatures) {
+    printf("Sauvegarde en cours...\n");
+    
+    if (sauvegarder_jeu_complet("savegame.json", plongeur, creatures, nb_creatures) == 0) {
+        printf("✅ Partie sauvegardée avec succès!\n");
+    } else {
+        printf("❌ Erreur lors de la sauvegarde\n");
+    }
+    
+    // Libération mémoire
+    free_plongeur(plongeur);
+    // ... autres libérations
+}
+
 int main() {
     // Charger la sauvegarde directement dans tes structures
     SauvegardeJeu *sauvegarde = charger_sauvegarde_complete("/mnt/c/Users/bcoqu/Documents/GROUPE-15/saves/oceandepths_save_v1.json");
     if (!sauvegarde) {
         printf("Création d'une nouvelle partie...\n");
+        Plongeur *nv_plongeur = nouveau_plongeur();
+        Combat_plongeur *nv_plongeur_combat = nouveau_combat_plongeur(nv_plongeur);
         return 1;
     }
 
