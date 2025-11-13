@@ -8,11 +8,11 @@ void ok(){
 }
 
 void tous_test_passe(){
-    printf("\e[1;32mTous les tests sont passés !\e[0m\n");
+    printf("Tous les tests sont passes!\n");
 }
 
 void debut_test(){
-    printf("Début des tests...\n");
+    printf("Debut des tests...\n");
 }
 
 void separateur_sections(){

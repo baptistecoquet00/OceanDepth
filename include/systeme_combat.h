@@ -13,6 +13,7 @@
 #include "combat.h"
 #include "creatures.h"
 #include "systeme_fenetre.h"
+#include "sauvegarde.h"
 
 
 
@@ -24,6 +25,7 @@ typedef struct {
     InterfaceCombat *interface;
     GestionFenetre *gf;
     bool combat_actif;
+    GestionnaireCompetences *competences;  // ← NOUVELLES COMPÉTENCES
 } SystemeCombat;
 
 
