@@ -1,6 +1,10 @@
 #ifndef JOUEUR_H
 #define JOUEUR_H
 
+#include <stdio.h>
+#include <stdlib.h>
+
+
 #define POINT_DE_VIE_MAX 100
 #define ZERO_POINT_DE_VIE 0
 #define OXYGENE_MAX 100

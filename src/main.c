@@ -4,11 +4,16 @@
 #include "../include/systeme_combat.h"
 #include "../include/charger.h"
 #include "../include/sauvegarde.h"
+#include "../include/carte.h"
+#include "../include/interface_carte.h"
+
 // main.c
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>  // pour sleep()
+#include <unistd.h>
 #include <time.h>
+#include <locale.h>
+#include <termios.h>
 
 #define ARENE_IMPLEMENTATION
 #include "../include/gm.h"
@@ -16,231 +21,361 @@
 #include "../include/interface_stats_joueur.h"
 #include "../include/combat.h"
 
-
-
-// CreatureMarine* creer_requin_tigre() {
-//     CreatureMarine *requin = malloc(sizeof(CreatureMarine));
-    
-//     requin->id = 1;
-//     strncpy(requin->nom, "Requin-Tigre", sizeof(requin->nom)-1);
-//     requin->points_de_vie_max = 100;
-//     requin->points_de_vie_actuels = 100;
-//     requin->attaque_minimale = 10;
-//     requin->attaque_maximale = 20;
-//     requin->defense = 8;
-//     requin->vitesse = 15;
-//     strncpy(requin->effet_special, "saignement", sizeof(requin->effet_special)-1);
-//     requin->est_vivant = 1;
-    
-//     return requin;
-// }
-
-
-// int main() {
-//     // Initialisation
-//     srand(time(NULL));
-    
-//     Arene *jeu_arene = nouvelle_arene(1024 * 1024); // 1MB
-//     GestionFenetre gf;
-//     nouvelle_gf(&gf, jeu_arene);
-    
-//     // Création du joueur
-//     Plongeur *nv_plongeur = nouveau_plongeur();
-//     Combat_plongeur *nv_plongeur_combat = nouveau_combat_plongeur(nv_plongeur);
-
-//     // Création de l'ennemi
-//     //CreatureMarine *ennemi = creer_requin_tigre();
-//     CreatureMarine creatures[MAX_CREATURES];
-//     int nb_creatures;
-//     int profondeur = 150;  // Exemple: 150m de profondeur
-    
-//     init_creatures_random(creatures, &nb_creatures, profondeur);
-    
-//     printf("=== RENCONTRE ALÉATOIRE À %dm ===\n", profondeur);
-//     printf("%d créature(s) générée(s):\n", nb_creatures);
-//     for (int i = 0; i < nb_creatures; i++) {
-//         printf("- %s (%d PV, Attaque: %d-%d, Defense: %d)\n",
-//                creatures[i].nom, 
-//                creatures[i].points_de_vie_actuels,
-//                creatures[i].attaque_minimale,
-//                creatures[i].attaque_maximale,
-//                creatures[i].defense);
-//     }
-
-//     // printf("=== LANCEMENT DU COMBAT ===\n");
-//     // printf("Joueur: %d PV, %d O2\n", 
-//     //        nv_plongeur_combat->gestion_fatigue_vie->points_de_vie,
-//     //        nv_plongeur_combat->gestion_fatigue_vie->niveau_oxygene);
-//     // printf("Ennemi: %s (%d PV)\n", ennemi->nom, ennemi->points_de_vie_actuels);
-    
-//     CreatureMarine *ennemi = &creatures[0];
-    
-//     printf("\n=== COMBAT CONTRE %s ===\n", ennemi->nom);
-
-//     // Création et exécution du système de combat
-//     SystemeCombat *combat = creer_systeme_combat(&gf, nv_plongeur_combat, ennemi);
-//     executer_combat(combat);
-    
-//     // Nettoyage
-//     printf("Combat terminé. Nettoyage...\n");
-    
-//     // Libération mémoire
-//     //free(ennemi);
-//     free_combat_plongeur(nv_plongeur_combat);
-//     free_plongeur(nv_plongeur);
-
-//     // Note: Tu devras implémenter detruire_systeme_combat() selon ta gestion mémoire
-//     detruire_systeme_combat(combat);
-    
-//     arene_detruite(jeu_arene);
-    
-//     printf("=== FIN DU PROGRAMME ===\n");
-//     return 0;
-// }
-
-void debug_creature(const char* nom, CreatureMarine *c) {
-    printf("DEBUG %s:\n", nom);
-    printf("  Nom: '%s'\n", c->nom);
-    printf("  PV: %d/%d\n", c->points_de_vie_actuels, c->points_de_vie_max);
-    printf("  Attaque: %d-%d\n", c->attaque_minimale, c->attaque_maximale);
-    printf("  Defense: %d\n", c->defense);
-    printf("  Vitesse: %d\n", c->vitesse);
-    printf("  Effet: '%s'\n", c->effet_special);
-    printf("  Vivant: %d\n", c->est_vivant);
-    printf("  ID: %d\n", c->id);
-    printf("  Taille structure: %zu bytes\n", sizeof(*c));
+// Fonction pour configurer le terminal en mode non-canonique
+void configurer_terminal() {
+    struct termios term;
+    tcgetattr(STDIN_FILENO, &term);
+    term.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &term);
 }
 
+// Fonction pour restaurer le terminal
+void restaurer_terminal() {
+    struct termios term;
+    tcgetattr(STDIN_FILENO, &term);
+    term.c_lflag |= (ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &term);
+}
 
-void recommencer_jeu() {
-    printf("🎮 Nouvelle partie!\n");
+// Fonction pour lire un caractère sans bloquer
+int lire_caractere() {
+    struct termios oldt, newt;
+    int ch;
     
+    tcgetattr(STDIN_FILENO, &oldt);
+    newt = oldt;
+    newt.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
     
-    Plongeur *nv_plongeur = nouveau_plongeur();
-    Combat_plongeur *nv_plongeur_combat = nouveau_combat_plongeur(nv_plongeur);
+    ch = getchar();
     
-    printf("✅ Plongeur créé avec les stats par défaut\n");
-    
-   
-    afficher_plongeur(nv_plongeur);
-    afficher_combat_plongeur(nv_plongeur_combat);
-    
-    // Ici tu peux appeler ta boucle principale de jeu
-    // executer_jeu_principal(nv_plongeur_combat);
-    
-    free_combat_plongeur(nv_plongeur_combat);
-    free_plongeur(nv_plongeur);
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    return ch;
+}
+
+void afficher_menu_principal() {
+    printf("\033[2J\033[1;1H"); // Clear screen
+    printf("=== OCEAN DEPTHS ===\n");
+    printf("1. Nouvelle partie\n");
+    printf("2. Charger partie\n");
+    printf("3. Quitter\n");
+    printf("Choix: ");
+    fflush(stdout);
 }
 
 void game_over(Plongeur* plongeur, CreatureMarine* creatures, int nb_creatures) {
-    printf(" Game Over! Sauvegarde de la partie...\n");
+    printf("Game Over! Sauvegarde de la partie...\n");
     
-    // Sauvegarder l'état actuel (avec 0 PV)
     if (sauvegarder_jeu_complet("./saves/game_over/savegame_gameover.json", plongeur, creatures, nb_creatures) == 0) {
-        printf(" État de game over sauvegardé\n");
+        printf("État de game over sauvegardé\n");
     }
     
-    // Option: proposer de recommencer
     printf("Voulez-vous recommencer? (o/n): ");
     char choix = getchar();
     if (choix == 'o' || choix == 'O') {
-        // Recréer une nouvelle partie
-        recommencer_jeu();
+        printf("Redémarrage...\n");
+    } else {
+        printf("Retour au menu principal...\n");
     }
 }
+
+
+
+
 
 void quitter_jeu(Plongeur* plongeur, CreatureMarine* creatures, int nb_creatures) {
     printf("Sauvegarde en cours...\n");
     
     if (sauvegarder_jeu_complet("./saves/savegame.json", plongeur, creatures, nb_creatures) == 0) {
-        printf("Partie sauvegardée avec succès!\n");
+        printf("✅ Partie sauvegardée avec succès!\n");
     } else {
-        printf("Erreur lors de la sauvegarde\n");
+        printf("❌ Erreur lors de la sauvegarde\n");
     }
 }
 
-int main() {
-    // Charger la sauvegarde directement dans tes structures
-    SauvegardeJeu *sauvegarde = charger_sauvegarde_complete("./saves/oceandepths_save_v1.json");
+void executer_nouvelle_partie(GestionFenetre *gf, Arene *arene) {
+    printf("🎮 Démarrage d'une nouvelle partie...\n");
     
-    Plongeur *nv_plongeur;
-    Combat_plongeur *nv_plongeur_combat;
-    CreatureMarine creatures[MAX_CREATURES];
-    int nb_creatures = 0;
-
-    if (!sauvegarde) {
-        printf("Création d'une nouvelle partie...\n");
-        nv_plongeur = nouveau_plongeur();
-        nv_plongeur_combat = nouveau_combat_plongeur(nv_plongeur);
+    // Créer le joueur
+    Plongeur *nv_plongeur = nouveau_plongeur();
+    Combat_plongeur *nv_plongeur_combat = nouveau_combat_plongeur(nv_plongeur);
+    
+    // Créer la carte
+    CarteOcean *carte = creer_carte(arene);
+    InterfaceCarte *interface_carte = creer_interface_carte(gf);
+    
+    printf("✅ Monde initialisé - Prêt à explorer!\n");
+    printf("Appuyez sur une touche pour continuer...\n");
+    getchar();
+    
+    // Boucle principale de navigation
+    int navigation_actif = 1;
+    while (navigation_actif) {
+        // Utiliser le système de fenêtres
+        mettre_a_jour_interface_carte(interface_carte, carte);
+        gf_rendu(gf);
         
-        // Générer des créatures pour la nouvelle partie
-        init_creatures_random(creatures, &nb_creatures, 150);
-    } else {
-        // Utiliser les structures de la sauvegarde
-        nv_plongeur = sauvegarde->plongeur;
-        nv_plongeur_combat = sauvegarde->combat_plongeur;
-        // Note: Tu devras adapter pour utiliser sauvegarde->creatures et sauvegarde->nb_creatures
-    }
-
-    // Initialiser l'arène et l'interface
-    Arene *jeu_arene = nouvelle_arene(1024 * 1024);
-    GestionFenetre gf;
-    nouvelle_gf(&gf, jeu_arene);
-    
-    int jeu_actif = 1;
-    
-    // Si sauvegarde chargée, combattre les créatures sauvegardées
-    if (sauvegarde) {
-        for (int i = 0; i < sauvegarde->nb_creatures && jeu_actif; i++) {
-            if (sauvegarde->creatures[i].est_vivant) {
-                printf("\n--- COMBAT contre %s ---\n", sauvegarde->creatures[i].nom);
-                
-                SystemeCombat *combat = creer_systeme_combat(&gf, sauvegarde->combat_plongeur, &sauvegarde->creatures[i]);
-                executer_combat(combat);
-
-                // Vérifier si le joueur est mort
-                if (sauvegarde->plongeur->points_de_vie <= 0) {
-                    game_over(sauvegarde->plongeur, sauvegarde->creatures, sauvegarde->nb_creatures);
-                    jeu_actif = 0;
+        printf("Commande (ZQSD/E/R): ");
+        fflush(stdout);
+        
+        // Lire l'entrée
+        char choix = lire_caractere();
+        printf("\n");
+        
+        switch(choix) {
+            case 'z': 
+            case 'Z':
+                if (deplacement_possible(carte, 0, -1)) {
+                    deplacer_joueur(carte, 0, -1);
+                    printf("Déplacement vers le nord\n");
+                } else {
+                    printf("Déplacement impossible!\n");
                 }
+                break;
+            case 's': 
+            case 'S':
+                if (deplacement_possible(carte, 0, 1)) {
+                    deplacer_joueur(carte, 0, 1);
+                    printf("Déplacement vers le sud\n");
+                } else {
+                    printf("Déplacement impossible!\n");
+                }
+                break;
+            case 'q': 
+            case 'Q':
+                if (deplacement_possible(carte, -1, 0)) {
+                    deplacer_joueur(carte, -1, 0);
+                    printf("Déplacement vers l'ouest\n");
+                } else {
+                    printf("Déplacement impossible!\n");
+                }
+                break;
+            case 'd': 
+            case 'D':
+                if (deplacement_possible(carte, 1, 0)) {
+                    deplacer_joueur(carte, 1, 0);
+                    printf("Déplacement vers l'est\n");
+                } else {
+                    printf("Déplacement impossible!\n");
+                }
+                break;
+            case 'e':
+            case 'E':
+                {
+                    ZoneCarte *zone = get_zone_actuelle(carte);
+                    printf("Interaction avec: %s\n", zone->nom);
+                    
+                    if (zone->nb_ennemis > 0) {
+                        printf("⚔️  Combat déclenché contre %s!\n", zone->nom);
+                        
+                        // Générer des créatures pour cette zone
+                        CreatureMarine creatures[MAX_CREATURES];
+                        int nb_creatures;
+                        init_creatures_random(creatures, &nb_creatures, zone->profondeur);
+                        
+                        if (nb_creatures > 0) {
+                            printf("Vous combattez un %s!\n", creatures[0].nom);
+                            
+                            //  CRÉER UN GESTIONNAIRE DE FENÊTRES SÉPARÉ POUR LE COMBAT 
+                            GestionFenetre gf_combat;
+                            nouvelle_gf(&gf_combat, arene);
+                            
+                            // Clear screen complet
+                            printf("\033[2J\033[1;1H");
+                            printf("=== DÉBUT DU COMBAT ===\n");
+                            sleep(2);
+                            
+                            // Utiliser le NOUVEAU gestionnaire pour le combat
+                            SystemeCombat *combat = creer_systeme_combat(&gf_combat, nv_plongeur_combat, &creatures[0]);
+                            executer_combat(combat);
+                            
+                            // Vérifier si le joueur est mort
+                            if (nv_plongeur->points_de_vie <= 0) {
+                                printf("💀 Game Over! Vous avez été vaincu...\n");
+                                
+                                game_over(nv_plongeur, creatures, nb_creatures);
+                                
+                                navigation_actif = 0;
 
-                free(combat->interface);
-                free(combat);
-            }
+                                if (interface_carte) detruire_interface_carte(interface_carte);
+                                free_combat_plongeur(nv_plongeur_combat);
+                                free_plongeur(nv_plongeur);
+                                return;
+                            } else if (!creatures[0].est_vivant) {
+                                // Victoire - récompenses
+                                printf("✅ Vous avez vaincu le %s!\n", creatures[0].nom);
+                                nv_plongeur->perles += 20;
+                                printf("+20 perles! Total: %d perles\n", nv_plongeur->perles);
+                                
+                                // Marquer la zone comme pacifiée
+                                zone->nb_ennemis = 0;
+                            }
+                            
+                            // Nettoyer le système de combat
+                            detruire_systeme_combat(combat);
+                            
+                            //  DÉTRUIRE le gestionnaire de combat
+                            // (Les fenêtres sont dans l'arène, pas besoin de les détruire manuellement)
+                            
+                            // Clear screen complet avant de retourner à la carte
+                            printf("\033[2J\033[1;1H");
+                            printf("Retour à la carte...\n");
+                            sleep(1);
+                            
+                            //  RECRÉER COMPLÈTEMENT l'interface carte
+                            detruire_interface_carte(interface_carte);
+                            interface_carte = creer_interface_carte(gf);
+                            
+                            // Rafraîchir tout
+                            mettre_a_jour_interface_carte(interface_carte, carte);
+                            gf_rendu(gf);
+                        }
+                    }else if (zone->type == TYPE_BASE) {
+                        printf("🏠 Retour à la base - Sauvegarde automatique\n");
+                        // Restaurer PV et oxygène
+                        nv_plongeur->points_de_vie = nv_plongeur->points_de_vie_max;
+                        nv_plongeur->niveau_oxygene = nv_plongeur->niveau_oxygene_max;
+                        nv_plongeur->niveau_fatigue = 0;
+                        printf("PV et oxygène restaurés!\n");
+                        
+                        // Sauvegarder la partie
+                        if (sauvegarder_jeu_complet("./saves/savegame_auto.json", nv_plongeur, NULL, 0) == 0) {
+                            printf("💾 Partie sauvegardée!\n");
+                        }
+                    } else if (zone->type == TYPE_BATEAU) {
+                        printf("🛍️  Bienvenue au magasin!\n");
+                        printf("Vous avez %d perles\n", nv_plongeur->perles);
+                        printf("(Fonctionnalité à implémenter)\n");
+                    } else if (zone->type == TYPE_EPAVE) {
+                        printf("💰 Vous trouvez un trésor dans l'épave!\n");
+                        int perles_trouvees = 10 + rand() % 40;
+                        nv_plongeur->perles += perles_trouvees;
+                        printf("+%d perles! Total: %d perles\n", perles_trouvees, nv_plongeur->perles);
+                    } else if (zone->type == TYPE_GROTTE) {
+                        printf("🕳️  Vous explorez la grotte...\n");
+                        printf("Vous trouvez un équipement spécial!\n");
+                        // Amélioration des stats
+                        nv_plongeur->points_de_vie_max += 10;
+                        nv_plongeur->points_de_vie = nv_plongeur->points_de_vie_max;
+                        printf("+10 PV maximum! PV: %d/%d\n", 
+                               nv_plongeur->points_de_vie, nv_plongeur->points_de_vie_max);
+                    } else {
+                        printf("Rien d'intéressant ici...\n");
+                    }
+                    printf("Appuyez sur une touche pour continuer...");
+                    getchar();
+                }
+                break;
+            case 'r':
+            case 'R':
+                navigation_actif = 0;
+                printf("Retour au menu principal...\n");
+                break;
+            default:
+                printf("Commande invalide. Utilisez ZQSD pour vous déplacer, E pour interagir, R pour quitter.\n");
+                printf("Appuyez sur une touche pour continuer...");
+                getchar();
+                break;
         }
-    } else {
-        // Pour une nouvelle partie, tu devras implémenter ta propre logique de combat
-        // ex: SystemeCombat *combat = creer_systeme_combat(&gf, nv_plongeur_combat, &creatures[0]);
-        // executer_combat(combat);
-        printf("Nouvelle partie - logique de combat à implémenter\n");
-    }
-    
-    // Si le jeu est toujours actif, proposer de sauvegarder en quittant
-    if (jeu_actif) {
-        printf("\nVoulez-vous sauvegarder avant de quitter? (o/n): ");
-        char choix = getchar();
-        getchar(); // Consommer le \n
         
-        if (choix == 'o' || choix == 'O') {
-            if (sauvegarde) {
-                quitter_jeu(sauvegarde->plongeur, sauvegarde->creatures, sauvegarde->nb_creatures);
-            } else {
-                quitter_jeu(nv_plongeur, creatures, nb_creatures);
-            }
-        }
+        // Petite pause
+        sleep(1);
     }
     
     // Nettoyage
-    if (sauvegarde) {
-        //free_combat_plongeur(nv_plongeur_combat);
-        //free_plongeur(nv_plongeur);
-        liberer_sauvegarde(sauvegarde);
-    } else {
-        // Libérer les structures de la nouvelle partie
-        free_combat_plongeur(nv_plongeur_combat);
-        free_plongeur(nv_plongeur);
+    if (interface_carte) detruire_interface_carte(interface_carte);
+    free_combat_plongeur(nv_plongeur_combat);
+    free_plongeur(nv_plongeur);
+}
+
+
+void executer_partie_chargee(GestionFenetre *gf, Arene *arene) {
+    printf("Chargement de la sauvegarde...\n");
+    
+    SauvegardeJeu *sauvegarde = charger_sauvegarde_complete("./saves/oceandepths_save_v1.json");
+    if (!sauvegarde) {
+        printf("❌ Erreur: Impossible de charger la sauvegarde\n");
+        printf("Création d'une nouvelle partie à la place...\n");
+        sleep(2);
+        executer_nouvelle_partie(gf, arene);
+        return;
     }
     
+    printf("✅ Sauvegarde chargée - Reprise de la partie\n");
+    printf("Joueur: PV: %d/%d, Oxygène: %d/%d, Perles: %d\n", 
+           sauvegarde->plongeur->points_de_vie,
+           sauvegarde->plongeur->points_de_vie_max,
+           sauvegarde->plongeur->niveau_oxygene,
+           sauvegarde->plongeur->niveau_oxygene_max,
+           sauvegarde->plongeur->perles);
+    printf("Appuyez sur une touche pour continuer...\n");
+    getchar();
+    
+    // Pour l'instant, on utilise le même système que nouvelle partie
+    // mais avec les données chargées
+    printf("Fonctionnalité de reprise exacte en cours de développement...\n");
+    printf("Lancement d'une nouvelle partie pour l'instant...\n");
+    sleep(2);
+    executer_nouvelle_partie(gf, arene);
+    
+    // Nettoyage
+    liberer_sauvegarde(sauvegarde);
+}
+
+int main() {
+    // Au début de main()
+    printf("Début du jeu - Mémoire allouée: %u MB\n", (10 * 1024 * 1024) / (1024 * 1024));
+    // Initialisation pour supporter les émojis
+    setlocale(LC_ALL, "en_US.UTF-8");
+    
+    // Initialisation aléatoire
+    srand(time(NULL));
+    
+    // Configurer le terminal
+    configurer_terminal();
+    
+    // Initialisation de l'arène et du système de fenêtres
+    Arene *jeu_arene = nouvelle_arene(10 * 1024 * 1024); // 10MB au lieu de 1MB
+    GestionFenetre gf;
+    nouvelle_gf(&gf, jeu_arene);
+    
+    printf("=== OCEAN DEPTHS - Jeu d'aventure sous-marine ===\n");
+    printf("Initialisation terminée. Appuyez sur une touche pour continuer...\n");
+    getchar();
+    
+    // Menu principal
+    int jeu_actif = 1;
+    while (jeu_actif) {
+        afficher_menu_principal();
+        
+        char choix = lire_caractere();
+        printf("\n");
+        
+        switch(choix) {
+            case '1':
+                printf("Lancement nouvelle partie...\n");
+                sleep(1);
+                executer_nouvelle_partie(&gf, jeu_arene);
+                break;
+            case '2':
+                printf("Chargement partie...\n");
+                sleep(1);
+                executer_partie_chargee(&gf, jeu_arene);
+                break;
+            case '3':
+                jeu_actif = 0;
+                printf("Au revoir!\n");
+                break;
+            default:
+                printf("❌ Choix invalide. Appuyez sur une touche...\n");
+                getchar();
+                break;
+        }
+    }
+    
+    // Nettoyage final
+    restaurer_terminal();
     arene_detruite(jeu_arene);
+    printf("Jeu terminé. Merci d'avoir joué !\n");
     return 0;
 }

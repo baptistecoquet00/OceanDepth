@@ -32,23 +32,23 @@ void mettre_a_jour_interface_combat(InterfaceCombat *interface,
     //afficher_fenetre(interface->combat_win, 28, 4, "♠        🦈");
     //afficher_fenetre(interface->combat_win, 25, 5, "---------> <---------");
     
-    if (strcmp(ennemi->nom, "requin") == 0) {
+    if (strcmp(ennemi->nom, "Requin") == 0) {
         afficher_fenetre(interface->combat_win, 28, 4, "♠        🦈");
         afficher_fenetre(interface->combat_win, 25, 5, "---------> <---------");
     }
-    else if (strcmp(ennemi->nom, "crabe geant") == 0) {
+    else if (strcmp(ennemi->nom, "Crabe Géant") == 0) {
         afficher_fenetre(interface->combat_win, 28, 4, "♠        🦀");
         afficher_fenetre(interface->combat_win, 25, 5, "---------> <---------");
     }
-    else if (strcmp(ennemi->nom, "meduse") == 0) {
+    else if (strcmp(ennemi->nom, "Méduse") == 0) {
         afficher_fenetre(interface->combat_win, 28, 4, "♠        🐙");
         afficher_fenetre(interface->combat_win, 25, 5, "---------> <---------");
     }
-    else if (strcmp(ennemi->nom, "kraken") == 0) {
+    else if (strcmp(ennemi->nom, "Kraken") == 0) {
         afficher_fenetre(interface->combat_win, 28, 4, "♠        🦑");
         afficher_fenetre(interface->combat_win, 25, 5, "---------> <---------");
     }
-    else if (strcmp(ennemi->nom, "poisson-epee") == 0){
+    else if (strcmp(ennemi->nom, "Poisson-Épée") == 0){
         // Valeur par défaut si le monstre n'est pas reconnu
         afficher_fenetre(interface->combat_win, 28, 4, "♠        🐟");
         afficher_fenetre(interface->combat_win, 25, 5, "---------> <---------");

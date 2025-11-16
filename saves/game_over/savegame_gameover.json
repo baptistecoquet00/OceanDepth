@@ -1,12 +1,12 @@
 {
     "oceandepths_save_v1": {
         "plongeur":{
-            "pv_plongeur": -11,
+            "pv_plongeur": -12,
             "pv_max_plongeur": 100,
-            "nv_oxygene": 39,
+            "nv_oxygene": 90,
             "nv_max_oxygne": 100,
-            "niveau_fatigue": 4,
-            "perles": 1270
+            "niveau_fatigue": 1,
+            "perles": 14
         },
         "equipement": ["Harpon_Rouille","Neoprene_Basic"],
         "position": {
@@ -14,37 +14,17 @@
             "nom_zone": "Recif_Corallien"
         },
         "creatures": {
-            "nb_monstre": 3,
+            "nb_monstre": 1,
             "state_creature": [
                 {
-                    "nom_creature": "kraken",
-                    "pv_creature": 33,
-                    "pv_max_creature": 156,
-                    "attaque_minimale": 25,
-                    "attaque_maximale": 35,
-                    "defense": 10,
-                    "vitesse": 4,
-                    "effet_special": "etreinte"
-                },
-                {
-                    "nom_creature": "requin",
-                    "pv_creature": 89,
-                    "pv_max_creature": 89,
-                    "attaque_minimale": 15,
-                    "attaque_maximale": 25,
-                    "defense": 5,
-                    "vitesse": 7,
-                    "effet_special": "frenesie"
-                },
-                {
-                    "nom_creature": "meduse",
-                    "pv_creature": 23,
-                    "pv_max_creature": 34,
-                    "attaque_minimale": 8,
-                    "attaque_maximale": 15,
-                    "defense": 2,
-                    "vitesse": 9,
-                    "effet_special": "paralysie"
+                    "nom_creature": "Crabe Géant",
+                    "pv_creature": 100,
+                    "pv_max_creature": 100,
+                    "attaque_minimale": 12,
+                    "attaque_maximale": 20,
+                    "defense": 12,
+                    "vitesse": 3,
+                    "effet_special": "carapace"
                 }
             ]
         }
