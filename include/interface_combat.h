@@ -8,7 +8,6 @@
 #include "joueur.h"
 #include "creatures.h"
 #include "combat.h"
-#include "interface_combat.h"
 #include "interface_stats_joueur.h"
 
 typedef struct {

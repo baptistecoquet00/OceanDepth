@@ -60,9 +60,16 @@ void gf_rendu(GestionFenetre *gf){
     fflush(stdout);
 }
 
+// void fenetre_nettoyer(Fenetre *fenetre){
+//     if(fenetre->tampon){
+//         memset(fenetre->tampon,' ',fenetre->largeur * fenetre->hauteur);
+//     }
+// }
+
 void fenetre_nettoyer(Fenetre *fenetre){
     if(fenetre->tampon){
         memset(fenetre->tampon,' ',fenetre->largeur * fenetre->hauteur);
+        fenetre_dessiner_bordure(fenetre);
     }
 }
 

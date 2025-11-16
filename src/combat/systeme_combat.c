@@ -84,6 +84,7 @@ void executer_tour_joueur(SystemeCombat *systeme) {
             case 5: // Fuir (termine le tour)
                 afficher_message_combat(systeme->interface, "Vous tentez de fuir...");
                 systeme->combat_actif = false;
+                systeme->plongeur->a_fui = true;
                 attaques_effectuees = attaques_max; // Force la fin du tour
                 break;
         }
@@ -145,13 +146,8 @@ void executer_combat(SystemeCombat *systeme) {
         
         if (tour_est_au_joueur(&systeme->tour)) {
             if (tour_attente_action(&systeme->tour)) {
-                // ⭐⭐ SUPPRIMER l'appel à afficher_actions_disponibles() ici
-                // ⭐⭐ SUPPRIMER le getchar() ici
-                
-                // ⭐⭐ APPEL DIRECT SANS PARAMÈTRE ⭐⭐
-                executer_tour_joueur(systeme);  // ⬅️ Plus de paramètre 'action'
+                executer_tour_joueur(systeme);
                 tour_action_effectuee(&systeme->tour);
-                
             } else {
                 tour_passer_creature(&systeme->tour);
             }
@@ -169,6 +165,84 @@ void executer_combat(SystemeCombat *systeme) {
         gf_rendu(systeme->gf);
         sleep(2);
     }
+    
+    
+    printf("\033[2J\033[1;1H"); // Clear screen
+    printf("=== COMBAT TERMINÉ ===\n");
+    
+    // Afficher le résultat final
+    if (systeme->plongeur->gestion_fatigue_vie->points_de_vie <= 0) {
+        printf("💀 Vous avez été vaincu!\n");
+    } else if (systeme->ennemi->points_de_vie_actuels <= 0) {
+        printf("✅ Victoire! %s vaincu\n", systeme->ennemi->nom);
+        printf("+20 perles!\n");
+    }
+    
+    printf("Appuyez sur une touche pour continuer...");
+    getchar(); // Attendre une touche
+    
+    
+    fenetre_nettoyer(systeme->interface->combat_win);
+    fenetre_nettoyer(systeme->interface->actions_win);
+    fenetre_nettoyer(systeme->interface->stats_win);
+}
+
+// Variables pour gérer la position courante dans la fenêtre
+static int curseur_x = 0;
+static int curseur_y = 0;
+
+void deplacer_curseur_fenetre(Fenetre *fenetre, int y, int x) {
+    if (!fenetre) return;
+    
+    // S'assurer que les coordonnées sont dans les limites
+    curseur_x = (x < 0) ? 0 : (x >= fenetre->largeur - 2) ? fenetre->largeur - 2 : x;
+    curseur_y = (y < 0) ? 0 : (y >= fenetre->hauteur - 2) ? fenetre->hauteur - 2 : y;
+    
+    // Ajuster pour la bordure (zone interne commence à 1,1)
+    curseur_x += 1;
+    curseur_y += 1;
+}
+
+void afficher_texte_fenetre(Fenetre *fenetre, const char *texte) {
+    if (!fenetre || !fenetre->tampon || !texte) return;
+    
+    int pos = curseur_y * fenetre->largeur + curseur_x;
+    int max_chars = fenetre->largeur - curseur_x;
+    
+    int chars_a_copier = strlen(texte);
+    if (chars_a_copier > max_chars) {
+        chars_a_copier = max_chars;
+    }
+    
+    // Copier le texte à la position courante
+    memcpy(&fenetre->tampon[pos], texte, chars_a_copier);
+    
+    // Avancer le curseur
+    curseur_x += chars_a_copier;
+    
+    // Si on dépasse la largeur, passer à la ligne suivante
+    if (curseur_x >= fenetre->largeur - 1) {
+        curseur_x = 1; // Retour au début (après bordure gauche)
+        curseur_y++;
+        
+        // Si on dépasse la hauteur, rester sur la dernière ligne
+        if (curseur_y >= fenetre->hauteur - 1) {
+            curseur_y = fenetre->hauteur - 2;
+        }
+    }
+}
+
+void debut_attribut(Fenetre *fenetre, int attribut) {
+    // Dans un système simple sans vrai support couleur, on ignore les attributs
+    // Mais on garde la fonction pour la compatibilité
+    (void)fenetre;
+    (void)attribut;
+}
+
+void fin_attribut(Fenetre *fenetre, int attribut) {
+    // Même chose - ignoré dans cette implémentation simple
+    (void)fenetre;
+    (void)attribut;
 }
 
 void detruire_systeme_combat(SystemeCombat *systeme) {

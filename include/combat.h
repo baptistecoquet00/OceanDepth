@@ -7,6 +7,7 @@
 
 #include <string.h>
 #include <unistd.h>
+#include <stdbool.h>
 
 #define NB_MAXIMUM_ATTAQUE_PAR_TOUR 3
 #define NB_MOYEN_ATTAQUE_PAR_TOUR 2
@@ -20,6 +21,7 @@ typedef struct
     int competence_special;
     int compteur_attaques;
     Plongeur* gestion_fatigue_vie;
+    bool a_fui;
 } Combat_plongeur;
 
 Combat_plongeur* nouveau_combat_plongeur(Plongeur* plongeur);

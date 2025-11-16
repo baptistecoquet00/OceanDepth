@@ -117,7 +117,8 @@ void* arene_allocation_alignee(Arene* arene, size_t taille,unsigned int aligneme
     }
 
     if(arene->index + rembourrage + taille > arene->taille_total)
-    {
+    {   
+        printf("❌ ERREUR MÉMOIRE: Plus d'espace dans l'arène! (%lu + %lu > %lu)\n", arene->index, taille, arene->taille_total);
         return NULL;
     }
 

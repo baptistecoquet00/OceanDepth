@@ -1,5 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
+
 #include "../include/joueur.h"
 
 Plongeur* nouveau_plongeur() {
