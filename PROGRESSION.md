@@ -3,8 +3,10 @@
 - [x] Étape 1 : Génération créatures
 - [x] Étape 2 : Attaque joueur
 - [x] Étape 3 : Attaque créatures
-- [ ] Étape 4 : Récompenses
+- [x] Étape 4 : Récompenses
 - [x] Étape 5 : Sauvegarde Chargement
+- [x] Étape 6 : Compétences Aquatiques
+- [x] Étape 7 : Cartographie des Océans
 ...
 ## Captures d'écran
 [Insérer vos captures montrant le jeu en action,
