@@ -127,13 +127,16 @@ void recommencer_jeu() {
     
     // Ici tu peux appeler ta boucle principale de jeu
     // executer_jeu_principal(nv_plongeur_combat);
+    
+    free_combat_plongeur(nv_plongeur_combat);
+    free_plongeur(nv_plongeur);
 }
 
 void game_over(Plongeur* plongeur, CreatureMarine* creatures, int nb_creatures) {
     printf(" Game Over! Sauvegarde de la partie...\n");
     
     // Sauvegarder l'état actuel (avec 0 PV)
-    if (sauvegarder_jeu_complet("/mnt/c/Users/bcoqu/Documents/GROUPE-15/saves/game_over/savegame_gameover.json", plongeur, creatures, nb_creatures) == 0) {
+    if (sauvegarder_jeu_complet("./saves/game_over/savegame_gameover.json", plongeur, creatures, nb_creatures) == 0) {
         printf(" État de game over sauvegardé\n");
     }
     
@@ -149,15 +152,11 @@ void game_over(Plongeur* plongeur, CreatureMarine* creatures, int nb_creatures) 
 void quitter_jeu(Plongeur* plongeur, CreatureMarine* creatures, int nb_creatures) {
     printf("Sauvegarde en cours...\n");
     
-    if (sauvegarder_jeu_complet("savegame.json", plongeur, creatures, nb_creatures) == 0) {
+    if (sauvegarder_jeu_complet("./saves/savegame.json", plongeur, creatures, nb_creatures) == 0) {
         printf("Partie sauvegardée avec succès!\n");
     } else {
         printf("Erreur lors de la sauvegarde\n");
     }
-    
-    // Libération mémoire
-    free_plongeur(plongeur);
-    // ... autres libérations
 }
 
 int main() {
@@ -233,6 +232,8 @@ int main() {
     
     // Nettoyage
     if (sauvegarde) {
+        //free_combat_plongeur(nv_plongeur_combat);
+        //free_plongeur(nv_plongeur);
         liberer_sauvegarde(sauvegarde);
     } else {
         // Libérer les structures de la nouvelle partie

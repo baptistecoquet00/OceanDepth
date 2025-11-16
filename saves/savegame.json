@@ -1,11 +1,11 @@
 {
     "oceandepths_save_v1": {
         "plongeur":{
-            "pv_plongeur": -11,
+            "pv_plongeur": 69,
             "pv_max_plongeur": 100,
-            "nv_oxygene": 39,
+            "nv_oxygene": 46,
             "nv_max_oxygne": 100,
-            "niveau_fatigue": 4,
+            "niveau_fatigue": 1,
             "perles": 1270
         },
         "equipement": ["Harpon_Rouille","Neoprene_Basic"],
@@ -18,7 +18,7 @@
             "state_creature": [
                 {
                     "nom_creature": "kraken",
-                    "pv_creature": 33,
+                    "pv_creature": 124,
                     "pv_max_creature": 156,
                     "attaque_minimale": 25,
                     "attaque_maximale": 35,
@@ -38,7 +38,7 @@
                 },
                 {
                     "nom_creature": "meduse",
-                    "pv_creature": 23,
+                    "pv_creature": -20,
                     "pv_max_creature": 34,
                     "attaque_minimale": 8,
                     "attaque_maximale": 15,

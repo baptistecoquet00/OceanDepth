@@ -4,7 +4,7 @@
 #include "../../include/interface_stats_joueur.h"
 
 
-void afficher_stats_joueur(GestionFenetre *gf, Arene *jeu_arene, Plongeur *joueur) {
+void afficher_stats_joueur(GestionFenetre *gf , Plongeur *joueur) {
     Fenetre *stats_win = gf_creer_fenetre(gf, 5, 5, 90, 10, "STATISTIQUES");
     
     printf("DEBUG: Début afficher_stats_joueur\n");

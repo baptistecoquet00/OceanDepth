@@ -1,11 +1,11 @@
 {
     "oceandepths_save_v1": {
         "plongeur":{
-            "pv_plongeur": 87,
+            "pv_plongeur": 100,
             "pv_max_plongeur": 100,
             "nv_oxygene": 58,
             "nv_max_oxygne":100,
-            "niveau_fatigue": 3,
+            "niveau_fatigue": 1,
             "perles": 1270
         },
 
