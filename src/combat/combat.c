@@ -39,7 +39,7 @@ int combat_calcul_degats(int attaque_joueur, int bonus_arme){
 }
 
 void combat_plongeur_calcul_fatigue(Combat_plongeur* plongeur_combat, int nombre_attaques_ce_tour) {
-    // Ajouter le nombre d'attaques de ce tour au compteur
+    
     plongeur_combat->compteur_attaques += nombre_attaques_ce_tour;
     
     // Toutes les 3 attaques cumulées, ajouter 1 point de fatigue
