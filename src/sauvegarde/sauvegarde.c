@@ -90,3 +90,4 @@ int sauvegarder_jeu_complet(const char* nom_fichier, Plongeur* plongeur, Creatur
     printf("✅ Sauvegarde créée: %s\n", nom_fichier);
     return 0;
 }
+

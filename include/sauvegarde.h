@@ -14,3 +14,7 @@
 int sauvegarder_plongeur(const char* nom_fichier, Plongeur* plongeur);
 int sauvegarder_creatures(const char* nom_fichier, CreatureMarine* creatures, int nb_creatures);
 int sauvegarder_jeu_complet(const char* nom_fichier, Plongeur* plongeur, CreatureMarine* creatures, int nb_creatures);
+// void recommencer_jeu();
+// void game_over(Plongeur* plongeur, CreatureMarine* creatures, int nb_creatures);
+// void quitter_jeu(Plongeur* plongeur, CreatureMarine* creatures, int nb_creatures);
+#endif
