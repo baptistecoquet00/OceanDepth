@@ -427,7 +427,6 @@ void executer_partie_chargee(GestionFenetre *gf, Arene *arene) {
                             printf("=== DÉBUT DU COMBAT ===\n");
                             sleep(2);
                             
-                            // ⭐⭐ UTILISER LE PLONGEUR DE LA SAUVEGARDE ⭐⭐
                             SystemeCombat *combat = creer_systeme_combat(gf_combat, sauvegarde->combat_plongeur, &creatures[0]);
                             executer_combat(combat);
                             
@@ -463,7 +462,6 @@ void executer_partie_chargee(GestionFenetre *gf, Arene *arene) {
                         }
                     } else {
                         // Interactions avec les autres zones
-                        // ⭐⭐ UTILISER sauvegarde->plongeur au lieu de nv_plongeur ⭐⭐
                         if (zone->type == TYPE_BASE) {
                             printf("🏠 Retour à la base\n");
                             sauvegarde->plongeur->points_de_vie = sauvegarde->plongeur->points_de_vie_max;

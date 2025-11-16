@@ -13,5 +13,6 @@ pour éviter un malheureux "effet démo" le jour de la soutenance]
 ![alt text](image.png)
 ![alt text](image-1.png)
 ![alt text](image-2.png)
+![alt text](image-3.png)
 ## Difficultés rencontrées
 [Décrire les problèmes et solutions]
