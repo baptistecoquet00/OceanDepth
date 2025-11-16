@@ -6,7 +6,7 @@
             "nv_oxygene": 100,
             "nv_max_oxygne": 100,
             "niveau_fatigue": 0,
-            "perles": 0
+            "perles": 1270
         },
         "equipement": ["Harpon_Rouille","Neoprene_Basic"],
         "position": {

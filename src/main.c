@@ -162,10 +162,16 @@ void executer_nouvelle_partie(GestionFenetre *gf, Arene *arene) {
             case 'e':
             case 'E':
                 {
+                    static int combat_count = 0; // Compteur de combats
+                    
+                   
+                    printf("=== COMBAT #%d ===\n", combat_count);
+
                     ZoneCarte *zone = get_zone_actuelle(carte);
                     printf("Interaction avec: %s\n", zone->nom);
                     
                     if (zone->nb_ennemis > 0) {
+                        combat_count++;
                         printf("⚔️  Combat déclenché contre %s!\n", zone->nom);
                         
                         // Générer des créatures pour cette zone
@@ -173,12 +179,12 @@ void executer_nouvelle_partie(GestionFenetre *gf, Arene *arene) {
                         int nb_creatures;
                         init_creatures_random(creatures, &nb_creatures, zone->profondeur);
                         
-                        if (nb_creatures > 0) {
+                        if (nb_creatures > 0 && creatures[0].nom[0] != '\0') {
                             printf("Vous combattez un %s!\n", creatures[0].nom);
                             
                             //  CRÉER UN GESTIONNAIRE DE FENÊTRES SÉPARÉ POUR LE COMBAT 
-                            GestionFenetre gf_combat;
-                            nouvelle_gf(&gf_combat, arene);
+                             GestionFenetre *gf_combat = malloc(sizeof(GestionFenetre));
+                            nouvelle_gf(gf_combat, arene);
                             
                             // Clear screen complet
                             printf("\033[2J\033[1;1H");
@@ -186,9 +192,11 @@ void executer_nouvelle_partie(GestionFenetre *gf, Arene *arene) {
                             sleep(2);
                             
                             // Utiliser le NOUVEAU gestionnaire pour le combat
-                            SystemeCombat *combat = creer_systeme_combat(&gf_combat, nv_plongeur_combat, &creatures[0]);
+                            SystemeCombat *combat = creer_systeme_combat(gf_combat, nv_plongeur_combat, &creatures[0]);
                             executer_combat(combat);
                             
+                            bool joueur_est_mort = false;
+
                             // Vérifier si le joueur est mort
                             if (nv_plongeur->points_de_vie <= 0) {
                                 printf("💀 Game Over! Vous avez été vaincu...\n");
@@ -196,6 +204,9 @@ void executer_nouvelle_partie(GestionFenetre *gf, Arene *arene) {
                                 game_over(nv_plongeur, creatures, nb_creatures);
                                 
                                 navigation_actif = 0;
+                                
+                                //free(gf_combat);
+                                joueur_est_mort = true;
 
                                 if (interface_carte) detruire_interface_carte(interface_carte);
                                 free_combat_plongeur(nv_plongeur_combat);
@@ -215,17 +226,33 @@ void executer_nouvelle_partie(GestionFenetre *gf, Arene *arene) {
                             detruire_systeme_combat(combat);
                             
                             //  DÉTRUIRE le gestionnaire de combat
+                            free(gf_combat); 
                             // (Les fenêtres sont dans l'arène, pas besoin de les détruire manuellement)
                             
+                            if (joueur_est_mort) {
+                                if (interface_carte) detruire_interface_carte(interface_carte);
+                                free_combat_plongeur(nv_plongeur_combat);
+                                free_plongeur(nv_plongeur);
+                                return;
+                            }
+
                             // Clear screen complet avant de retourner à la carte
                             printf("\033[2J\033[1;1H");
                             printf("Retour à la carte...\n");
                             sleep(1);
                             
                             //  RECRÉER COMPLÈTEMENT l'interface carte
-                            detruire_interface_carte(interface_carte);
-                            interface_carte = creer_interface_carte(gf);
+                            // detruire_interface_carte(interface_carte);
+                            // interface_carte = creer_interface_carte(gf);
                             
+                            printf("\033[2J\033[1;1H");
+                            printf("Retour à la carte...\n");
+                            sleep(1);
+
+                            // Juste mettre à jour l'affichage, pas recréer
+                            mettre_a_jour_interface_carte(interface_carte, carte);
+                            gf_rendu(gf);
+
                             // Rafraîchir tout
                             mettre_a_jour_interface_carte(interface_carte, carte);
                             gf_rendu(gf);
@@ -259,6 +286,11 @@ void executer_nouvelle_partie(GestionFenetre *gf, Arene *arene) {
                         nv_plongeur->points_de_vie = nv_plongeur->points_de_vie_max;
                         printf("+10 PV maximum! PV: %d/%d\n", 
                                nv_plongeur->points_de_vie, nv_plongeur->points_de_vie_max);
+                        if (sauvegarder_jeu_complet("./saves/savegame_auto.json", nv_plongeur, NULL, 0) == 0) {
+                            printf("💾 Progression sauvegardée automatiquement!\n");
+                        } else {
+                            printf("❌ Erreur lors de la sauvegarde automatique\n");
+                        }
                     } else {
                         printf("Rien d'intéressant ici...\n");
                     }
@@ -293,6 +325,7 @@ void executer_partie_chargee(GestionFenetre *gf, Arene *arene) {
     printf("Chargement de la sauvegarde...\n");
     
     SauvegardeJeu *sauvegarde = charger_sauvegarde_complete("./saves/oceandepths_save_v1.json");
+    
     if (!sauvegarde) {
         printf("❌ Erreur: Impossible de charger la sauvegarde\n");
         printf("Création d'une nouvelle partie à la place...\n");
@@ -311,20 +344,166 @@ void executer_partie_chargee(GestionFenetre *gf, Arene *arene) {
     printf("Appuyez sur une touche pour continuer...\n");
     getchar();
     
-    // Pour l'instant, on utilise le même système que nouvelle partie
-    // mais avec les données chargées
-    printf("Fonctionnalité de reprise exacte en cours de développement...\n");
-    printf("Lancement d'une nouvelle partie pour l'instant...\n");
-    sleep(2);
-    executer_nouvelle_partie(gf, arene);
+    // ⭐⭐ UTILISER RÉELLEMENT LA SAUVEGARDE ⭐⭐
+    printf("🎮 Démarrage de la partie chargée...\n");
+    
+    // Créer la carte
+    CarteOcean *carte = creer_carte(arene);
+    InterfaceCarte *interface_carte = creer_interface_carte(gf);
+    
+    printf("✅ Monde chargé - Prêt à explorer!\n");
+    printf("Appuyez sur une touche pour continuer...\n");
+    getchar();
+    
+    // Boucle principale de navigation AVEC LES DONNÉES CHARGÉES
+    int navigation_actif = 1;
+    while (navigation_actif) {
+        mettre_a_jour_interface_carte(interface_carte, carte);
+        gf_rendu(gf);
+        
+        printf("Commande (ZQSD/E/R): ");
+        fflush(stdout);
+        
+        char choix = lire_caractere();
+        printf("\n");
+        
+        switch(choix) {
+            case 'z': 
+            case 'Z':
+                if (deplacement_possible(carte, 0, -1)) {
+                    deplacer_joueur(carte, 0, -1);
+                    printf("Déplacement vers le nord\n");
+                } else {
+                    printf("Déplacement impossible!\n");
+                }
+                break;
+            case 's': 
+            case 'S':
+                if (deplacement_possible(carte, 0, 1)) {
+                    deplacer_joueur(carte, 0, 1);
+                    printf("Déplacement vers le sud\n");
+                } else {
+                    printf("Déplacement impossible!\n");
+                }
+                break;
+            case 'q': 
+            case 'Q':
+                if (deplacement_possible(carte, -1, 0)) {
+                    deplacer_joueur(carte, -1, 0);
+                    printf("Déplacement vers l'ouest\n");
+                } else {
+                    printf("Déplacement impossible!\n");
+                }
+                break;
+            case 'd': 
+            case 'D':
+                if (deplacement_possible(carte, 1, 0)) {
+                    deplacer_joueur(carte, 1, 0);
+                    printf("Déplacement vers l'est\n");
+                } else {
+                    printf("Déplacement impossible!\n");
+                }
+                break;
+            case 'e':
+            case 'E':
+                {
+                    ZoneCarte *zone = get_zone_actuelle(carte);
+                    printf("Interaction avec: %s\n", zone->nom);
+                    
+                    if (zone->nb_ennemis > 0) {
+                        printf("⚔️  Combat déclenché contre %s!\n", zone->nom);
+                        
+                        CreatureMarine creatures[MAX_CREATURES];
+                        int nb_creatures;
+                        init_creatures_random(creatures, &nb_creatures, zone->profondeur);
+                        
+                        if (nb_creatures > 0 && creatures[0].nom[0] != '\0') {
+                            printf("Vous combattez un %s!\n", creatures[0].nom);
+                            
+                            GestionFenetre *gf_combat = malloc(sizeof(GestionFenetre));
+                            nouvelle_gf(gf_combat, arene);
+                            
+                            printf("\033[2J\033[1;1H");
+                            printf("=== DÉBUT DU COMBAT ===\n");
+                            sleep(2);
+                            
+                            // ⭐⭐ UTILISER LE PLONGEUR DE LA SAUVEGARDE ⭐⭐
+                            SystemeCombat *combat = creer_systeme_combat(gf_combat, sauvegarde->combat_plongeur, &creatures[0]);
+                            executer_combat(combat);
+                            
+                            bool joueur_est_mort = (sauvegarde->plongeur->points_de_vie <= 0);
+                            bool ennemi_est_mort = !creatures[0].est_vivant;
+                            
+                            if (joueur_est_mort) {
+                                printf("💀 Game Over! Vous avez été vaincu...\n");
+                                game_over(sauvegarde->plongeur, creatures, nb_creatures);
+                                navigation_actif = 0;
+                            } else if (ennemi_est_mort) {
+                                printf("✅ Vous avez vaincu le %s!\n", creatures[0].nom);
+                                sauvegarde->plongeur->perles += 20;
+                                printf("+20 perles! Total: %d perles\n", sauvegarde->plongeur->perles);
+                                zone->nb_ennemis = 0;
+                            }
+                            
+                            detruire_systeme_combat(combat);
+                            free(gf_combat);
+                            
+                            if (joueur_est_mort) {
+                                if (interface_carte) detruire_interface_carte(interface_carte);
+                                liberer_sauvegarde(sauvegarde);
+                                return;
+                            }
+                            
+                            printf("\033[2J\033[1;1H");
+                            printf("Retour à la carte...\n");
+                            sleep(1);
+                            
+                            mettre_a_jour_interface_carte(interface_carte, carte);
+                            gf_rendu(gf);
+                        }
+                    } else {
+                        // Interactions avec les autres zones
+                        // ⭐⭐ UTILISER sauvegarde->plongeur au lieu de nv_plongeur ⭐⭐
+                        if (zone->type == TYPE_BASE) {
+                            printf("🏠 Retour à la base\n");
+                            sauvegarde->plongeur->points_de_vie = sauvegarde->plongeur->points_de_vie_max;
+                            sauvegarde->plongeur->niveau_oxygene = sauvegarde->plongeur->niveau_oxygene_max;
+                            sauvegarde->plongeur->niveau_fatigue = 0;
+                            printf("PV et oxygène restaurés!\n");
+                            
+                            if (sauvegarder_jeu_complet("./saves/savegame_auto.json", sauvegarde->plongeur, NULL, 0) == 0) {
+                                printf("💾 Partie sauvegardée!\n");
+                            }
+                        }
+                        // ... autres interactions
+                    }
+                    printf("Appuyez sur une touche pour continuer...");
+                    getchar();
+                }
+                break;
+            case 'r':
+            case 'R':
+                navigation_actif = 0;
+                printf("Retour au menu principal...\n");
+                break;
+            default:
+                printf("Commande invalide\n");
+                printf("Appuyez sur une touche pour continuer...");
+                getchar();
+                break;
+        }
+        
+        sleep(1);
+    }
     
     // Nettoyage
+    if (interface_carte) detruire_interface_carte(interface_carte);
     liberer_sauvegarde(sauvegarde);
 }
 
 int main() {
     // Au début de main()
-    printf("Début du jeu - Mémoire allouée: %u MB\n", (10 * 1024 * 1024) / (1024 * 1024));
+    printf("Début du jeu - Mémoire allouée: %u GB\n", (1024 * 1024 * 1024) / (1024 * 1024 * 1024));
     // Initialisation pour supporter les émojis
     setlocale(LC_ALL, "en_US.UTF-8");
     
@@ -335,7 +514,7 @@ int main() {
     configurer_terminal();
     
     // Initialisation de l'arène et du système de fenêtres
-    Arene *jeu_arene = nouvelle_arene(10 * 1024 * 1024); // 10MB au lieu de 1MB
+    Arene *jeu_arene = nouvelle_arene(1024 * 1024 * 1024); // 1GB - NO LIMITS! 
     GestionFenetre gf;
     nouvelle_gf(&gf, jeu_arene);
     
