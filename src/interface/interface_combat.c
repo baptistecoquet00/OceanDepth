@@ -29,9 +29,36 @@ void mettre_a_jour_interface_combat(InterfaceCombat *interface,
     
     // Contenu combat
     afficher_fenetref(interface->combat_win, 25, 3, "PLONGEUR VS %s", ennemi->nom);
-    afficher_fenetre(interface->combat_win, 28, 4, "♠        🦈");
-    afficher_fenetre(interface->combat_win, 25, 5, "---------> <---------");
+    //afficher_fenetre(interface->combat_win, 28, 4, "♠        🦈");
+    //afficher_fenetre(interface->combat_win, 25, 5, "---------> <---------");
     
+    if (strcmp(ennemi->nom, "requin") == 0) {
+        afficher_fenetre(interface->combat_win, 28, 4, "♠        🦈");
+        afficher_fenetre(interface->combat_win, 25, 5, "---------> <---------");
+    }
+    else if (strcmp(ennemi->nom, "crabe geant") == 0) {
+        afficher_fenetre(interface->combat_win, 28, 4, "♠        🦀");
+        afficher_fenetre(interface->combat_win, 25, 5, "---------> <---------");
+    }
+    else if (strcmp(ennemi->nom, "meduse") == 0) {
+        afficher_fenetre(interface->combat_win, 28, 4, "♠        🐙");
+        afficher_fenetre(interface->combat_win, 25, 5, "---------> <---------");
+    }
+    else if (strcmp(ennemi->nom, "kraken") == 0) {
+        afficher_fenetre(interface->combat_win, 28, 4, "♠        🦑");
+        afficher_fenetre(interface->combat_win, 25, 5, "---------> <---------");
+    }
+    else if (strcmp(ennemi->nom, "poisson-epee") == 0){
+        // Valeur par défaut si le monstre n'est pas reconnu
+        afficher_fenetre(interface->combat_win, 28, 4, "♠        🐟");
+        afficher_fenetre(interface->combat_win, 25, 5, "---------> <---------");
+    }
+    else {
+        // Valeur par défaut si le monstre n'est pas reconnu
+        afficher_fenetre(interface->combat_win, 28, 4, "♠        🐟");
+        afficher_fenetre(interface->combat_win, 25, 5, "---------> <---------");
+    }
+
     // Stats dynamiques combat
     // afficher_fenetref(interface->combat_win, 2, 7, "PV Joueur: %d/%d", 
     //                  plongeur->gestion_fatigue_vie->points_de_vie,
