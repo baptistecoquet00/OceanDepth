@@ -92,7 +92,7 @@ void afficher_carte(InterfaceCarte *interface, const CarteOcean *carte) {
         }
         
         // Affichage de la profondeur
-        char profondeur[16];
+        char profondeur[32];
         switch(ligne) {
             case 0: strcpy(profondeur, "SURFACE │ 0m"); break;
             case 1: strcpy(profondeur, "ZONE 1  │ 50m"); break;
@@ -252,4 +252,5 @@ void detruire_interface_carte(InterfaceCarte *interface) {
     
     // Note: Les fenêtres sont détruites par le GestionFenetre
     free(interface);
+
 }
